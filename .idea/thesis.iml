@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="WEB_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/tmp" />
+      <excludeFolder url="file://$MODULE_DIR$/.idea/sonarlint" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/.idea/sonarlint" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/cmake-build-emscripten-debug" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/cmake-build-emscripten-release" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/downloads" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/node" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/python" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/upstream" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+  <component name="SonarLintModuleSettings">
+    <option name="uniqueId" value="363a5178-98f3-4439-adfa-96dd0ccc3056" />
+  </component>
+</module>
