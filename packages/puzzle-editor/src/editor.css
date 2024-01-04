@@ -1,0 +1,26 @@
+#picture {
+  display: grid;
+  grid-column-gap: 0;
+  grid-row-gap: 0;
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+  height: fit-content;
+  width: fit-content;
+}
+
+#bg {
+  grid-area: 1 / 1 / 2 / 2;
+  touch-action: none;
+  z-index: 0;
+}
+
+#fg {
+  border: 1px solid black;
+  grid-area: 1 / 1 / 2 / 2;
+  touch-action: none;
+  z-index: 1;
+}
+
+#message {
+  display: none;
+}

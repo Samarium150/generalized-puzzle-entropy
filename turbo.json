@@ -7,7 +7,9 @@
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {},
-    "pre-dev": {},
+    "pre-dev": {
+      "cache": false
+    },
     "dev": {
       "dependsOn": ["^pre-dev"],
       "cache": false,

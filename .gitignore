@@ -8,7 +8,6 @@
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
-**/.idea/sonarlint/
 
 # AWS User-specific
 .idea/**/aws.xml
@@ -65,7 +64,7 @@ atlassian-ide-plugin.xml
 .idea/replstate.xml
 
 # SonarLint plugin
-.idea/sonarlint/
+**/.idea/sonarlint/
 
 # Crashlytics plugin (for Android Studio and IntelliJ)
 com_crashlytics_export_strings.xml
@@ -89,7 +88,7 @@ node_modules/
 /coverage
 
 # next.js
-/.next/
+**/.next/
 /out/
 
 # production

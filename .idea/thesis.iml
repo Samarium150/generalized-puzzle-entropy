@@ -13,6 +13,12 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/node" />
       <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/python" />
       <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/upstream" />
+      <excludeFolder url="file://$MODULE_DIR$/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/web/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/web/out" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/web/public/js" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
