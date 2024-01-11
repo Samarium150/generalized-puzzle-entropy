@@ -5,5 +5,4 @@
 [submodule "packages/puzzle-editor/lib/hog2"]
 	path = packages/puzzle-editor/lib/hog2
 	url = https://github.com/Samarium150/hog2.git
-	branch = witness-editor
 	shallow = true
