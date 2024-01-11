@@ -8,6 +8,9 @@ module.exports = {
   overrides: [
     {
       files: ["src/app/**/*.{ts,tsx}"],
+      rules: {
+        "prettier/prettier": ["error", { endOfLine: "auto" }],
+      },
     },
   ],
 };

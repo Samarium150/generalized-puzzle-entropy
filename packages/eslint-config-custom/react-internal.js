@@ -20,6 +20,10 @@ module.exports = {
   parserOptions: {
     project,
   },
+  env: {
+    browser: true,
+    node: true,
+  },
   globals: {
     JSX: true,
   },
@@ -32,7 +36,7 @@ module.exports = {
   },
   ignorePatterns: ["node_modules/", "dist/", ".eslintrc.js"],
   rules: {
-    "semi": ["error", "always"],
-    "quotes": ["error", "double"],
+    semi: ["error", "always"],
+    quotes: ["error", "double"],
   },
 };

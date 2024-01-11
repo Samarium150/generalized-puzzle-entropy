@@ -18,6 +18,9 @@ module.exports = {
   parserOptions: {
     project,
   },
+  env: {
+    node: true,
+  },
   globals: {
     React: true,
     JSX: true,
@@ -31,7 +34,7 @@ module.exports = {
   },
   ignorePatterns: ["node_modules/", "dist/"],
   rules: {
-    "semi": ["error", "always"],
-    "quotes": ["error", "double"],
-  }
+    semi: ["error", "always"],
+    quotes: ["error", "double"],
+  },
 };

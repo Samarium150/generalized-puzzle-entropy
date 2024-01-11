@@ -20,6 +20,8 @@
       <excludeFolder url="file://$MODULE_DIR$/apps/web/out" />
       <excludeFolder url="file://$MODULE_DIR$/apps/web/public/js" />
       <excludeFolder url="file://$MODULE_DIR$/.vercel" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/hog2" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

@@ -1,10 +1,9 @@
-Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 Set-Location -Path "$(git rev-parse --show-toplevel)\packages\puzzle-editor"
-cd lib\emsdk -ErrorAction Stop
+Set-Location -Path "lib\emsdk"
 .\emsdk.ps1 install latest
 .\emsdk.ps1 activate latest
-cd ..\..
+Set-Location -Path "..\.."
 if (Test-Path -Path "dist") {
   Remove-Item -Path "dist" -Recurse
 }

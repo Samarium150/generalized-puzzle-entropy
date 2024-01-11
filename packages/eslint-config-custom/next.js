@@ -22,6 +22,10 @@ module.exports = {
   parserOptions: {
     project,
   },
+  env: {
+    node: true,
+    browser: true,
+  },
   globals: {
     React: true,
     JSX: true,
@@ -38,7 +42,7 @@ module.exports = {
   rules: {
     "import/no-default-export": "off",
     "no-console": "off",
-    "semi": ["error", "always"],
-    "quotes": ["error", "double"],
-  }
+    semi: ["error", "always"],
+    quotes: ["error", "double"],
+  },
 };
