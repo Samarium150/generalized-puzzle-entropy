@@ -1,6 +1,9 @@
 {
-  "framework": "nextjs",
+  "buildCommand": "turbo run lint build",
   "devCommand": "turbo run dev",
-  "installCommand": "pnpm install",
-  "buildCommand": "turbo run lint build"
+  "framework": "nextjs",
+  "git": {
+    "deploymentEnabled": false
+  },
+  "installCommand": "pnpm install"
 }
