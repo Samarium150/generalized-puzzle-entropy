@@ -1,5 +1,6 @@
-git submodule update --remote --merge
-cd lib/emsdk || exit
+set -e
+cd "$(git rev-parse --show-toplevel)/packages/puzzle-editor"
+cd lib/emsdk
 ./emsdk install latest
 ./emsdk activate latest
 cd ../../
@@ -10,7 +11,7 @@ mkdir -p dist
 cmake -B dist -S . \
   -DCMAKE_C_COMPILER=lib/emsdk/upstream/emscripten/emcc \
   -DCMAKE_CXX_COMPILER=lib/emsdk/upstream/emscripten/em++ \
-  -DCMAKE_BUILD_TYPE=Debug \
+  -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_TOOLCHAIN_FILE=lib/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
 cmake --build dist --target editor
 if ls dist/src/editor.* >/dev/null 2>&1; then

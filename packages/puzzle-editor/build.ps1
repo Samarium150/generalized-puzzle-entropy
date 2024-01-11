@@ -1,4 +1,6 @@
-git submodule update --remote --merge
+Set-StrictMode -Version Latest
+$ErrorActionPreference = "Stop"
+Set-Location -Path "$(git rev-parse --show-toplevel)\packages\puzzle-editor"
 cd lib\emsdk -ErrorAction Stop
 .\emsdk.ps1 install latest
 .\emsdk.ps1 activate latest
