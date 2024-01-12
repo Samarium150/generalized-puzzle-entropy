@@ -3,7 +3,10 @@
 
 auto kRegionConstraintItems =
     std::vector<RegionConstraintItem>{{{kSeparation, 0, Colors::cyan}, point3d{-0.7, -0.52}, 0.1},
-                                      {{kStar, 0, Colors::cyan}, point3d{-0.45, -0.52}, 0.1}};
+                                      {{kStar, 0, Colors::cyan}, point3d{-0.45, -0.52}, 0.1},
+                                      {{kTriangle, 1, Colors::orange}, point3d{-0.2, -0.52}, 0.05},
+                                      {{kTriangle, 2, Colors::orange}, point3d{0, -0.52}, 0.05},
+                                      {{kTriangle, 3, Colors::orange}, point3d{0.27, -0.52}, 0.05}};
 auto kPathConstraintItems =
     std::vector<PathConstraintItem>{{kNoPathConstraint, point3d{-0.7, -0.13}, 0.075},
                                     {kMustCross, point3d{-0.5, -0.13}, 0.075},
@@ -34,7 +37,7 @@ static void DrawGameViewport(unsigned id) {
     kEditor.Draw(display);
     kEditor.Draw(display, kIWS.ws);
     if (kShowNumSolutions)
-        display.DrawText("# of solutions: ", Graphics::point{0.75, -0.95}, Colors::black, 0.075,
+        display.DrawText("# of solutions: ", point3d{0.75, -0.95}, Colors::black, 0.075,
                          Graphics::textAlignRight, Graphics::textBaselineTop);
     if (kSelectedEditorItem != -1 && kCursorViewport == 0) {
         if (kSelectedEditorItem < kRegionConstraintItems.size()) {
@@ -83,15 +86,15 @@ static void DrawGameViewport(unsigned id) {
             }
         }
         if (kShowNumSolutions)
-            display.DrawText(std::to_string(kNumSolutions).c_str(), Graphics::point{0.915, -0.95},
+            display.DrawText(std::to_string(kNumSolutions).c_str(), point3d{0.915, -0.95},
                              Colors::black, 0.075, Graphics::textAlignRight,
                              Graphics::textBaselineTop);
     } else {
-        kLastPosition = Graphics::point{-1, -1};
+        kLastPosition = point3d{-1, -1};
         if (kShowNumSolutions)
             display.DrawText(std::to_string(kCurrentSolutionIndices.size()).c_str(),
-                             Graphics::point{0.915, -0.95}, Colors::black, 0.075,
-                             Graphics::textAlignRight, Graphics::textBaselineTop);
+                             point3d{0.915, -0.95}, Colors::black, 0.075, Graphics::textAlignRight,
+                             Graphics::textBaselineTop);
     }
 }
 
