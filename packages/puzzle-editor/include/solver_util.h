@@ -22,9 +22,8 @@ void DFS(const Witness<width, height> &env, WitnessState<width, height> &state,
 }
 
 template <int width, int height>
-void GetAllSolutions(const Witness<width, height> &env,
+void GetAllSolutions(const Witness<width, height> &env, WitnessState<width, height> &state,
                      std::vector<WitnessState<width, height>> &puzzles) {
-    WitnessState<width, height> state;
     DFS(env, state, puzzles);
 }
 
@@ -38,14 +37,14 @@ auto GetNumSolutions(const Witness<width, height> &witness,
 }
 
 inline auto GetCurrentEntropy(const Witness<kPuzzleWidth, kPuzzleHeight> &env) {
-    WitnessState<kPuzzleWidth, kPuzzleHeight> state;
-    return kEntropy.SetRelative(true).Calculate(env, state, 0, std::nullopt);
+    kState = kIWS.ws;
+    return kEntropy.SetRelative(true).Calculate(env, kState, 0, std::nullopt);
 }
 
 inline auto GetCurrentAdvEntropy(const Witness<kPuzzleWidth, kPuzzleHeight> &env) {
-    WitnessState<kPuzzleWidth, kPuzzleHeight> state;
-    return kIWS.ws.path.empty() ? kEntropy.CalculateAdversarialEntropy(env, state, 0)
-                                : kEntropy.CalculatePartialAdversarialEntropy(env, kIWS.ws, 0);
+    kState = kIWS.ws;
+    return kIWS.ws.path.empty() ? kEntropy.CalculateAdversarialEntropy(env, kState, 0)
+                                : kEntropy.CalculatePartialAdversarialEntropy(env, kState, 0);
 }
 
 inline void UpdateEntropy(const Witness<kPuzzleWidth, kPuzzleHeight> &env) {
@@ -53,4 +52,89 @@ inline void UpdateEntropy(const Witness<kPuzzleWidth, kPuzzleHeight> &env) {
     kAdvEntropyInfo = GetCurrentAdvEntropy(env);
 }
 
-void UpdateSolutionIndices();
+inline void UpdateSolutionIndices() {
+    kCurrentSolutionIndices.clear();
+    for (auto i = 0; i < kAllSolutions.size(); ++i) {
+        if (kPuzzle.GoalTest(kAllSolutions[i])) kCurrentSolutionIndices.emplace_back(i);
+    }
+    if (kSolved) {
+        if (kCurrentSolutionIndices.empty())
+            kIWS.Reset();
+        else {
+            kSolutionIndex = 0;
+            kIWS.ws = kAllSolutions[kCurrentSolutionIndices[0]];
+        }
+    }
+}
+
+template <int width, int height>
+void InferHelper(Witness<width, height> &ref) {  // NOLINT
+    if (ref.constraintCount[kUnknownRegionConstraint] == 0) {
+        if (GetNumSolutions(ref, kAllSolutions) > 0 &&
+            std::find_if(kBest.begin(), kBest.end(), [&ref](const auto &p) {
+                return p.SaveToHashString() == ref.SaveToHashString();
+            }) == kBest.end()) {
+            kBest.emplace_back(ref);
+        }
+        return;
+    }
+    ref.CountColors();
+    auto addNewColor = ref.colorMap.size() < 2;
+    for (auto x = 0; x < width; ++x) {
+        for (auto y = 0; y < height; ++y) {
+            if (ref.GetRegionConstraint(x, y).type == kUnknownRegionConstraint) {
+                for (const auto &[constraint, i, j] : kRegionConstraintItems) {
+                    switch (constraint.type) {
+                        case kSeparation: {
+                            for (const auto &[color, _, _] : kColorItems) {
+                                auto containsColor = ref.colorMap.find(color) != ref.colorMap.end();
+                                if ((addNewColor && !containsColor) ||
+                                    (!addNewColor && containsColor)) {
+                                    auto newPuzzle = ref;
+                                    newPuzzle.AddSeparationConstraint(x, y, color);
+                                    InferHelper(newPuzzle);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        case kStar: {
+                            for (const auto &[color, _, _] : kColorItems) {
+                                auto containsColor = ref.colorMap.find(color) != ref.colorMap.end();
+                                if ((addNewColor && !containsColor) ||
+                                    (!addNewColor && containsColor)) {
+                                    auto newPuzzle = ref;
+                                    newPuzzle.AddStarConstraint(x, y, color);
+                                    InferHelper(newPuzzle);
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                        case kTriangle: {
+                            auto newPuzzle = ref;
+                            newPuzzle.AddTriangleConstraint(x, y, constraint.parameter);
+                            InferHelper(newPuzzle);
+                            break;
+                        }
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
+    }
+}
+
+inline void Infer() {
+    kState.Reset();
+    kBest.clear();
+    kBest.emplace_back(kPuzzle);
+    InferHelper(kPuzzle);
+    std::sort(kBest.begin() + 1, kBest.end(), [&](auto &a, auto &b) {
+        WitnessState<kPuzzleWidth, kPuzzleHeight> sa;
+        WitnessState<kPuzzleWidth, kPuzzleHeight> sb;
+        return kEntropy.Calculate(a, sa, 0, std::nullopt).value >
+               kEntropy.Calculate(b, sb, 0, std::nullopt).value;
+    });
+}

@@ -9,7 +9,7 @@ constexpr double kInf = std::numeric_limits<double>::max();
 
 struct RegionConstraintItem {
     WitnessRegionConstraint constraint{};
-    Graphics::point center{};
+    point3d center{};
     float radius{};
 };
 
@@ -17,7 +17,7 @@ extern std::vector<RegionConstraintItem> kRegionConstraintItems;
 
 struct PathConstraintItem {
     WitnessPathConstraintType constraint{};
-    Graphics::point center{};
+    point3d center{};
     float radius{};
 };
 
@@ -25,13 +25,13 @@ extern std::vector<PathConstraintItem> kPathConstraintItems;
 
 struct ColorItem {
     rgbColor color{};
-    Graphics::point center{};
+    point3d center{};
     float radius{};
 };
 
 extern std::vector<ColorItem> kColorItems;
 
-extern Graphics::point kCursor;
+extern point3d kCursor;
 extern int kCursorViewport;
 extern bool kDrawEditor;
 extern int kSelectedEditorItem;
@@ -40,9 +40,11 @@ constexpr int kPuzzleWidth = 4;
 constexpr int kPuzzleHeight = 4;
 extern Witness<kPuzzleWidth, kPuzzleHeight> kPuzzle;
 extern Witness<kPuzzleWidth, kPuzzleHeight> kEditor;
+extern WitnessState<kPuzzleWidth, kPuzzleHeight> kState;
 extern InteractiveWitnessState<kPuzzleWidth, kPuzzleHeight> kIWS;
 extern std::vector<WitnessState<kPuzzleWidth, kPuzzleHeight>> kAllSolutions;
 extern std::vector<std::size_t> kCurrentSolutionIndices;
+extern std::vector<Witness<kPuzzleWidth, kPuzzleHeight>> kBest;
 extern WitnessPuzzleEntropy<kPuzzleWidth, kPuzzleHeight> kEntropy;
 extern EntropyInfo kEntropyInfo;
 extern AdversaryEntropyInfo kAdvEntropyInfo;
@@ -50,3 +52,4 @@ extern bool kSolved;
 extern unsigned kNumSolutions;
 extern bool kShowNumSolutions;
 extern unsigned kSolutionIndex;
+extern unsigned kCurrentBest;

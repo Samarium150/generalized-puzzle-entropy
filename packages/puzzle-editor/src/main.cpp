@@ -5,6 +5,7 @@
 #include "the_witness_inference_rule.h"
 
 auto kPuzzle = Witness<kPuzzleWidth, kPuzzleHeight>{};
+auto kState = WitnessState<kPuzzleWidth, kPuzzleHeight>{};
 auto kEntropy = WitnessPuzzleEntropy<kPuzzleWidth, kPuzzleHeight>{};
 auto kEntropyInfo = EntropyInfo{};
 auto kAdvEntropyInfo = AdversaryEntropyInfo{};
@@ -15,34 +16,28 @@ auto kSolutionTree = std::vector<SolutionTreeNode>{};
 auto kSolutionIndex = 0u;
 
 static void InitPuzzle() {
-    kEntropy.ruleSet.SetRules(
-        kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
-    GetAllSolutions(kPuzzle, kAllSolutions);
+    kEntropy.ruleSet.SetRules(kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
+    GetAllSolutions(kPuzzle, kState, kAllSolutions);
     BuildTree(kPuzzle, kAllSolutions, kSolutionTree);
     UpdateSolutionIndices();
     UpdateEntropy(kPuzzle);
 }
 
 static void InstallHandlers() {
-    InstallKeyboardHandler(KeyboardHandler, "Open Editor", "open editor panel",
-                           kAnyModifier, 'e');
-    InstallKeyboardHandler(KeyboardHandler, "Load", "load a puzzle",
-                           kAnyModifier, 'l');
-    InstallKeyboardHandler(KeyboardHandler, "Reset", "reset the path",
-                           kAnyModifier, 'r');
-    InstallKeyboardHandler(KeyboardHandler, "Show Solution", "show a solution",
-                           kAnyModifier, 'v');
-    InstallKeyboardHandler(KeyboardHandler, "Export", "export the puzzle",
-                           kAnyModifier, 'w');
-    InstallKeyboardHandler(KeyboardHandler, "Suggest", "make a suggestion",
-                           kAnyModifier, 'z');
-    InstallMouseClickHandler(
-        ClickHandler, static_cast<tMouseEventType>(kMouseMove | kMouseUp |
-                                                   kMouseDown | kMouseDrag));
+    InstallKeyboardHandler(KeyboardHandler, "Prev Board", "Show next board.", kAnyModifier, '[');
+    InstallKeyboardHandler(KeyboardHandler, "Next Board", "Show prev board", kAnyModifier, ']');
+    InstallKeyboardHandler(KeyboardHandler, "Open Editor", "open editor panel", kAnyModifier, 'e');
+    InstallKeyboardHandler(KeyboardHandler, "Load", "load a puzzle", kAnyModifier, 'l');
+    InstallKeyboardHandler(KeyboardHandler, "Reset", "reset the path", kAnyModifier, 'r');
+    InstallKeyboardHandler(KeyboardHandler, "Show Solution", "show a solution", kAnyModifier, 'v');
+    InstallKeyboardHandler(KeyboardHandler, "Export", "export the puzzle", kAnyModifier, 'w');
+    InstallKeyboardHandler(KeyboardHandler, "Suggest", "make a suggestion", kAnyModifier, 'z');
+    InstallMouseClickHandler(ClickHandler, static_cast<tMouseEventType>(kMouseMove | kMouseUp |
+                                                                        kMouseDown | kMouseDrag));
     InstallWindowHandler(WindowHandler);
 }
 
-int main(int argc, char **argv) {
+int main(const int argc, char **argv) {
     std::thread(InitPuzzle).detach();
     InstallHandlers();
     RunHOGGUI(argc, argv, 1280, 640);

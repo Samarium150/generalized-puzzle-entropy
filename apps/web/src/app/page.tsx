@@ -9,7 +9,7 @@ const { Title, Link, Paragraph, Text } = Typography;
 
 export default function Home(): JSX.Element {
   const [showInstructions, setShowInstructions] = useState(true);
-  // noinspection JSUnresolvedLibraryURL
+
   return (
     <Layout
       className="w-screen overflow-y-visible"
@@ -21,18 +21,6 @@ export default function Home(): JSX.Element {
         </Title>
       </Header>
       <Content className="px-6 py-3">
-        <Script
-          src="https://cdn.jsdelivr.net/npm/long@3.0.1/dist/long.min.js"
-          strategy="beforeInteractive"
-        />
-        <Script
-          src="https://cdn.jsdelivr.net/npm/bytebuffer@5.0.1/dist/bytebuffer.min.js"
-          strategy="beforeInteractive"
-        />
-        <Script
-          src="https://cdn.jsdelivr.net/npm/protobufjs@5.0.1/dist/protobuf.min.js"
-          strategy="beforeInteractive"
-        />
         <Script src="/js/editor.js" strategy="beforeInteractive" />
         <Script src="/js/editor.worker.js" strategy="afterInteractive" />
         <Script src="/js/utils.js" strategy="afterInteractive" />
@@ -65,6 +53,13 @@ export default function Home(): JSX.Element {
               <li>
                 A star should be paired with exactly one other region constraint
                 of the same color regardless the type of it.
+              </li>
+              <li>
+                Question marks are used for letting AI suggest a good region
+                constraint. The maximum number of question marks is 4. AI will
+                propose suggestions by clicking the{" "}
+                <Text keyboard>Generate</Text> button on the right (the UI may
+                freeze).
               </li>
               <li>
                 Hexagons and disjoints are path constraints. The solution path

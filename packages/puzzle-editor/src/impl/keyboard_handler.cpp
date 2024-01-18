@@ -1,13 +1,18 @@
-#include <thread>
-
 #include "global.h"
 #include "handler.h"
 #include "solver_util.h"
 
+auto kBest = std::vector<Witness<kPuzzleWidth, kPuzzleHeight>>{};
+auto kCurrentBest = 0u;
+
 static void Calculate() {
-    UpdateEntropy(kPuzzle);
     auto ss = std::stringstream();
-    ss << R"({ "numConstraints": )"
+    kBest.clear();
+    if (kPuzzle.constraintCount[kUnknownRegionConstraint] != 0) {
+        Infer();
+    }
+    UpdateEntropy(kPuzzle);
+    ss << R"({ "numBest": )" << kBest.size() << R"(, "numConstraints": )"
        << std::count_if(kPuzzle.pathConstraints.cbegin(), kPuzzle.pathConstraints.cend(),
                         [](const auto &constraint) { return constraint != kNoPathConstraint; }) +
               std::accumulate(
@@ -24,8 +29,27 @@ static void Calculate() {
     submitTextToBuffer(ss.str().c_str());
 }
 
-void KeyboardHandler(std::size_t id, tKeyboardModifier /*mod*/, char key) {
+static void Load(const std::size_t index) {
+    kPuzzle = kBest[index];
+    kIWS.Reset();
+    kSolved = false;
+    UpdateSolutionIndices();
+}
+
+void KeyboardHandler(const std::size_t id, tKeyboardModifier /*mod*/, const char key) {
     switch (key) {
+        case '[':
+            if (!kBest.empty()) {
+                kCurrentBest = (kCurrentBest + kBest.size() - 1) % kBest.size();
+                Load(kCurrentBest);
+            }
+            break;
+        case ']':
+            if (!kBest.empty()) {
+                kCurrentBest = (++kCurrentBest) % kBest.size();
+                Load(kCurrentBest);
+            }
+            break;
         case 'e':
             kIWS.Reset();
             kSolved = false;
@@ -39,12 +63,23 @@ void KeyboardHandler(std::size_t id, tKeyboardModifier /*mod*/, char key) {
                 kSelectedEditorItem = -1;
             }
             break;
+        case 'k': {
+            std::stringstream ss(getTextBuffer());
+            std::size_t index;
+            ss >> index;
+            if (index < kBest.size()) {
+                kCurrentBest = index;
+                Load(kCurrentBest);
+            }
+            break;
+        }
         case 'l': {
             std::stringstream ss(getTextBuffer());
             auto witness = Witness<kPuzzleWidth, kPuzzleHeight>();
             ss >> witness;
             kPuzzle = witness;
             UpdateSolutionIndices();
+            UpdateEntropy(kPuzzle);
             break;
         }
         case 'r':

@@ -9,11 +9,10 @@ import {
 } from "@ant-design/icons";
 import { Button, Card, Col, Empty, Row, Space, Typography } from "antd";
 import React, { useEffect, useRef, useState } from "react";
-import { getModule } from "./module";
-
-import "./editor.css";
+import { getModule, ParsedModule, WASMModule } from "./module";
 
 interface Data {
+  numBest: number;
   numConstraints: number;
   numSolution: number;
   entropy: number;
@@ -31,192 +30,120 @@ type TabContent = Map<string, React.ReactNode>;
 const { Link, Paragraph, Text } = Typography;
 
 export function Editor(): React.JSX.Element {
-  const picture = useRef<HTMLDivElement>(null);
-  const bg = useRef<HTMLCanvasElement>(null);
-  const fg = useRef<HTMLCanvasElement>(null);
+  const items: TabContent = new Map();
   const message = useRef<HTMLDivElement>(null);
-
-  const htmlClientRect = (): DOMRect => {
-    return document.getElementsByTagName("html")[0].getBoundingClientRect();
-  };
-
-  const init = useRef<() => null>();
-  const frame = useRef<() => string>();
-  const mouseEvent =
-    useRef<
-      (x: number, y: number, up: boolean, down: boolean, drag: boolean) => null
-    >();
-  const keyEvent = useRef<(key: string) => null>();
-  const setCanvas = useRef<(width: number, height: number) => null>();
-
-  const down = useRef(false);
-  const elementOffsetX = useRef(0);
-  const elementOffsetY = useRef(0);
-
   const newTabIndex = useRef(-1);
 
+  const [module, setModule] = useState(new ParsedModule());
   const [suggestionDisabled, setSuggestionDisabled] = useState(true);
   const [suggestion, setSuggestion] = useState<React.ReactNode>();
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [tabs, setTabs] = useState<TabTitle[]>([]);
-  const [items, setItems] = useState<TabContent>(new Map());
+  const [tabItems, setTabItems] = useState<TabContent>(items);
   const [activeKey, setActiveKey] = useState("0");
 
-  const mouseDown = (event: { clientX: number; clientY: number }): void => {
-    if (mouseEvent.current) {
-      down.current = true;
-      const x = event.clientX + window.scrollX - elementOffsetX.current;
-      const y = event.clientY + window.scrollY - elementOffsetY.current;
-      mouseEvent.current(x, y, false, true, false);
-    }
-  };
-
-  const mouseUp = (event: { clientX: number; clientY: number }): void => {
-    if (mouseEvent.current) {
-      down.current = false;
-      const x = event.clientX + window.scrollX - elementOffsetX.current;
-      const y = event.clientY + window.scrollY - elementOffsetY.current;
-      mouseEvent.current(x, y, true, false, false);
-    }
-  };
-
-  const mouseDrag = (event: {
-    isPrimary: boolean;
-    clientX: number;
-    clientY: number;
-  }): void => {
-    if (mouseEvent.current) {
-      if (event.isPrimary && down.current) {
-        const x = event.clientX + window.scrollX - elementOffsetX.current;
-        const y = event.clientY + window.scrollY - elementOffsetY.current;
-        mouseEvent.current(x, y, false, true, true);
-      }
-      if (!down.current) {
-        const x = event.clientX + window.scrollX - elementOffsetX.current;
-        const y = event.clientY + window.scrollY - elementOffsetY.current;
-        mouseEvent.current(x, y, false, false, true);
-      }
-    }
-  };
-
   useEffect(() => {
-    const doFrame = (): void => {
-      if (frame.current) {
-        frame.current();
-        if (picture.current) {
-          const pictureRect = picture.current.getBoundingClientRect();
-          const htmlRect = htmlClientRect();
-          elementOffsetX.current = pictureRect.left - htmlRect.left;
-          elementOffsetY.current = pictureRect.top - htmlRect.top;
-        }
-      }
-    };
-
-    const installMouseHandlers = (): void => {
-      if (fg.current) {
-        fg.current.addEventListener("pointerdown", mouseDown, false);
-        fg.current.addEventListener("pointerup", mouseUp, false);
-        fg.current.addEventListener("pointermove", mouseDrag, false);
-
-        const fgRect = fg.current.getBoundingClientRect();
-        const htmlRect = htmlClientRect();
-        elementOffsetX.current = fgRect.left - htmlRect.left;
-        elementOffsetY.current = fgRect.top - htmlRect.top;
-      }
-    };
-
-    getModule()
-      .then((module) => {
-        init.current = module.cwrap("InitHOG", null, []);
-        frame.current = module.cwrap("DoFrame", "string", []);
-        mouseEvent.current = module.cwrap("MouseEvent", null, [
-          "number",
-          "number",
-          "boolean",
-          "boolean",
-          "boolean",
-        ]);
-        keyEvent.current = module.cwrap("HitKey", null, ["string"]);
-        setCanvas.current = module.cwrap("SetCanvasSize", null, [
-          "number",
-          "number",
-        ]);
-
-        init.current();
-        setCanvas.current(900, 450);
-        setInterval(doFrame, 50);
-        installMouseHandlers();
-        setTimeout(() => {
-          setSuggestionDisabled(false);
-        }, 20000);
-      })
-      .catch((error) => {
-        // eslint-disable-next-line no-alert -- load WASM failed
-        window.alert(error);
-      });
+    getModule("EditorModule")
+      .then(setModule)
+      // eslint-disable-next-line no-console -- load WASM failed
+      .catch(console.error);
+    setTimeout(() => {
+      setSuggestionDisabled(false);
+    }, 5000);
   }, []);
 
   const propose = (data: Data): void => {
     const result = (
-      <Paragraph>
-        <ul>
-          {data.numConstraints < 4 ? (
-            <li>
-              <Text type="danger">Try adding more constraints</Text>
-            </li>
-          ) : null}
-          {(() => {
-            if (data.numSolution === 0) {
-              return (
-                <li>
-                  <Text type="danger">The puzzle is unsolvable</Text>
-                </li>
-              );
-            } else if (data.numSolution > 10) {
-              return (
-                <li>
-                  <Text type="danger">The puzzle has too many solutions.</Text>
-                </li>
-              );
-            }
-            return null;
-          })()}
-          {(() => {
-            if (data.entropy < 3) {
-              return (
-                <li>
-                  <Text type="danger">Player can deduce solutions easily</Text>
-                </li>
-              );
-            } else if (data.entropy > 8) {
-              return (
-                <li>
-                  <Text type="success">The puzzle is hard to solve</Text>
-                </li>
-              );
-            }
-            return null;
-          })()}
-          {(() => {
-            if (data.advEntropy < 3) {
-              return (
-                <li>
-                  <Text type="danger">Players can easily notice mistakes</Text>
-                </li>
-              );
-            } else if (data.advEntropy > 8) {
-              return (
-                <li>
-                  <Text type="success">
-                    Many paths don&apos;t lead to goal (generally good)
-                  </Text>
-                </li>
-              );
-            }
-            return null;
-          })()}
-        </ul>
-      </Paragraph>
+      <Space direction="vertical">
+        <Paragraph>
+          <ul>
+            {data.numConstraints < 4 ? (
+              <li>
+                <Text type="danger">Try adding more constraints</Text>
+              </li>
+            ) : null}
+            {(() => {
+              if (data.numSolution === 0) {
+                return (
+                  <li>
+                    <Text type="danger">The puzzle is unsolvable</Text>
+                  </li>
+                );
+              } else if (data.numSolution > 10) {
+                return (
+                  <li>
+                    <Text type="danger">
+                      The puzzle has too many solutions.
+                    </Text>
+                  </li>
+                );
+              }
+              return null;
+            })()}
+            {(() => {
+              if (data.entropy < 3) {
+                return (
+                  <li>
+                    <Text type="danger">
+                      Player can deduce solutions easily
+                    </Text>
+                  </li>
+                );
+              } else if (data.entropy > 8) {
+                return (
+                  <li>
+                    <Text type="success">The puzzle is hard to solve</Text>
+                  </li>
+                );
+              }
+              return null;
+            })()}
+            {(() => {
+              if (data.advEntropy < 3) {
+                return (
+                  <li>
+                    <Text type="danger">
+                      Players can easily notice mistakes
+                    </Text>
+                  </li>
+                );
+              } else if (data.advEntropy > 8) {
+                return (
+                  <li>
+                    <Text type="success">
+                      Many paths don&apos;t lead to goal (generally good)
+                    </Text>
+                  </li>
+                );
+              }
+              return null;
+            })()}
+          </ul>
+        </Paragraph>
+        {data.numBest > 0 ? (
+          <Space direction="vertical">
+            <Text>Show suggested puzzles</Text>
+            <Space direction="horizontal">
+              <Button
+                onClick={() => {
+                  module.keyEvent("[");
+                }}
+                type="primary"
+              >
+                prev
+              </Button>
+              <Button
+                onClick={() => {
+                  module.keyEvent("]");
+                }}
+                type="primary"
+              >
+                next
+              </Button>
+            </Space>
+          </Space>
+        ) : null}
+      </Space>
     );
     setSuggestion(result);
   };
@@ -235,7 +162,7 @@ export function Editor(): React.JSX.Element {
   };
 
   const add = (): void => {
-    keyEvent.current?.("w");
+    module.keyEvent("w");
     setTimeout(() => {
       message.current?.dispatchEvent(
         new KeyboardEvent("keydown", { key: "-" }),
@@ -244,7 +171,7 @@ export function Editor(): React.JSX.Element {
     setTimeout(() => {
       const url = message.current?.innerHTML;
       if (validate(url)) {
-        const children = (
+        const child = (
           <Link
             copyable
             ellipsis
@@ -257,7 +184,8 @@ export function Editor(): React.JSX.Element {
         );
         const key = String(++newTabIndex.current);
         setTabs([...tabs, { label: `Puzzle ${key}`, key }]);
-        setItems({ ...items, [key]: children });
+        items.set(key, child);
+        setTabItems(items);
         setActiveKey(key);
       }
     }, 200);
@@ -268,26 +196,21 @@ export function Editor(): React.JSX.Element {
     const newTabs = tabs.filter((item) => item.key !== targetKey);
     if (newTabs.length === 0) {
       setActiveKey("-1");
-      setItems(new Map());
+      items.clear();
     } else if (targetKey === activeKey) {
       const { key } = newTabs[index === newTabs.length ? index - 1 : index];
       setActiveKey(key);
-      const newItems = new Map(items);
-      newItems.delete(targetKey);
-      setItems(newItems);
+      items.delete(targetKey);
     }
     setTabs(newTabs);
+    setTabItems(items);
   };
 
   return (
     <Space direction="vertical" size="middle">
       <Row>
         <Col flex="950px">
-          <div id="picture" ref={picture}>
-            <canvas height={450} id="fg" ref={fg} width={900} />
-            <canvas height={450} id="bg" ref={bg} width={900} />
-            <div id="message" ref={message} />
-          </div>
+          <WASMModule height={450} module={module} ref={message} width={900} />
         </Col>
         <Col flex="auto">
           <Card
@@ -296,7 +219,7 @@ export function Editor(): React.JSX.Element {
                 disabled={suggestionDisabled}
                 icon={<BulbOutlined />}
                 onClick={() => {
-                  keyEvent.current?.("z");
+                  module.keyEvent("z");
                   if (message.current?.innerHTML) {
                     propose(JSON.parse(message.current.innerHTML) as Data);
                   }
@@ -320,7 +243,7 @@ export function Editor(): React.JSX.Element {
               isEditorOpen ? <RightCircleOutlined /> : <LeftCircleOutlined />
             }
             onClick={() => {
-              keyEvent.current?.("e");
+              module.keyEvent("e");
               setIsEditorOpen(!isEditorOpen);
             }}
             shape="round"
@@ -335,7 +258,7 @@ export function Editor(): React.JSX.Element {
           <Button
             icon={<ReloadOutlined rotate={90} />}
             onClick={() => {
-              keyEvent.current?.("v");
+              module.keyEvent("v");
             }}
             shape="round"
             size="large"
@@ -353,7 +276,7 @@ export function Editor(): React.JSX.Element {
                 new KeyboardEvent("keydown", { key: "+" }),
               );
               setTimeout(() => {
-                if (message.current?.innerHTML) keyEvent.current?.("l");
+                if (message.current?.innerHTML) module.keyEvent("l");
               }, 200);
             }}
             shape="round"
@@ -402,7 +325,7 @@ export function Editor(): React.JSX.Element {
                 style={{ height: 20 }}
               />
             ) : (
-              <Card.Meta description={items.get(activeKey)} />
+              <Card.Meta description={tabItems.get(activeKey)} />
             )}
           </Card>
         </Col>

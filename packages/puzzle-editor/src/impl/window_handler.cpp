@@ -1,6 +1,6 @@
 #include "handler.h"
 
-void WindowHandler(std::size_t id, tWindowEventType type) {
+void WindowHandler(const std::size_t id, const tWindowEventType type) {
     switch (type) {
         case kWindowCreated:
             InstallFrameHandler(FrameHandler, id, nullptr);

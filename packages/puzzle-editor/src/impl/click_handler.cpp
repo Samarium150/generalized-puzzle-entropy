@@ -6,8 +6,8 @@ auto kCursorViewport = 0;
 auto kSelectedEditorItem = -1;
 auto kSolved = false;
 
-bool ClickHandler(std::size_t /*id*/, int viewport, int /*x*/, int /*y*/, point3d p,
-                  tButtonType /*type*/, tMouseEventType event) {
+bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/, point3d p,
+                  tButtonType /*type*/, const tMouseEventType event) {
     switch (viewport) {
         case 0:
             if (!kDrawEditor) {
@@ -27,9 +27,10 @@ bool ClickHandler(std::size_t /*id*/, int viewport, int /*x*/, int /*y*/, point3
                     for (auto i = 0; i < kPuzzle.regionConstraintLocations.size(); ++i) {
                         if (PointInRect(p, kPuzzle.regionConstraintLocations[i].second)) {
                             auto [x, y] = kPuzzle.GetRegionXYFromIndex(i);
-                            const auto &constraint =
-                                kRegionConstraintItems[kSelectedEditorItem].constraint;
-                            if (constraint == kPuzzle.GetRegionConstraint(x, y))
+
+                            if (const auto &constraint =
+                                    kRegionConstraintItems[kSelectedEditorItem].constraint;
+                                constraint == kPuzzle.GetRegionConstraint(x, y))
                                 kPuzzle.RemoveRegionConstraint(x, y);
                             else
                                 kPuzzle.AddRegionConstraint(x, y, constraint);
@@ -41,10 +42,11 @@ bool ClickHandler(std::size_t /*id*/, int viewport, int /*x*/, int /*y*/, point3
                         if (PointInRect(p, kPuzzle.pathConstraintLocations[i].second) &&
                             i != kPuzzleWidth * (kPuzzleHeight + 1) +
                                      (kPuzzleWidth + 1) * kPuzzleHeight) {
-                            auto constraint = kPathConstraintItems[kSelectedEditorItem -
-                                                                   kRegionConstraintItems.size()]
-                                                  .constraint;
-                            if (constraint == kEditor.pathConstraints[i])
+                            if (const auto constraint =
+                                    kPathConstraintItems[kSelectedEditorItem -
+                                                         kRegionConstraintItems.size()]
+                                        .constraint;
+                                constraint == kEditor.pathConstraints[i])
                                 kPuzzle.pathConstraints[i] = kNoPathConstraint;
                             else
                                 kPuzzle.pathConstraints[i] = constraint;
@@ -59,16 +61,19 @@ bool ClickHandler(std::size_t /*id*/, int viewport, int /*x*/, int /*y*/, point3
             if (event == kMouseDown && viewport == kCursorViewport) {
                 auto constraintSelected = false;
                 for (auto i = 0; i < kRegionConstraintItems.size(); ++i) {
-                    const auto &[constraint, c, radius] = kRegionConstraintItems[i];
-                    if (PointInRect(p, {c, radius})) {
-                        kSelectedEditorItem = i;
-                        constraintSelected = true;
+                    if (const auto &[constraint, c, radius] = kRegionConstraintItems[i];
+                        PointInRect(p, {c, radius})) {
+                        if (constraint.type != kUnknownRegionConstraint ||
+                            kEditor.constraintCount[kUnknownRegionConstraint] < 4) {
+                            kSelectedEditorItem = i;
+                            constraintSelected = true;
+                        }
                         break;
                     }
                 }
                 for (auto i = 0; i < kPathConstraintItems.size(); ++i) {
-                    const auto &[constraint, c, radius] = kPathConstraintItems[i];
-                    if (PointInRect(p, {c, radius})) {
+                    if (const auto &[constraint, c, radius] = kPathConstraintItems[i];
+                        PointInRect(p, {c, radius})) {
                         kSelectedEditorItem = i + static_cast<int>(kRegionConstraintItems.size());
                         constraintSelected = true;
                         break;

@@ -1,12 +1,13 @@
 #include "handler.h"
 #include "solver_util.h"
 
-auto kRegionConstraintItems =
-    std::vector<RegionConstraintItem>{{{kSeparation, 0, Colors::cyan}, point3d{-0.7, -0.52}, 0.1},
-                                      {{kStar, 0, Colors::cyan}, point3d{-0.45, -0.52}, 0.1},
-                                      {{kTriangle, 1, Colors::orange}, point3d{-0.2, -0.52}, 0.05},
-                                      {{kTriangle, 2, Colors::orange}, point3d{0, -0.52}, 0.05},
-                                      {{kTriangle, 3, Colors::orange}, point3d{0.27, -0.52}, 0.05}};
+auto kRegionConstraintItems = std::vector<RegionConstraintItem>{
+    {{kSeparation, 0, Colors::cyan}, point3d{-0.7, -0.52}, 0.1},
+    {{kStar, 0, Colors::cyan}, point3d{-0.45, -0.52}, 0.1},
+    {{kTriangle, 1, Colors::orange}, point3d{-0.2, -0.52}, 0.05},
+    {{kTriangle, 2, Colors::orange}, point3d{0, -0.52}, 0.05},
+    {{kTriangle, 3, Colors::orange}, point3d{0.27, -0.52}, 0.07},
+    {{kUnknownRegionConstraint, 0, Colors::black}, point3d{0.5, -0.52}, 0.05}};
 auto kPathConstraintItems =
     std::vector<PathConstraintItem>{{kNoPathConstraint, point3d{-0.7, -0.13}, 0.075},
                                     {kMustCross, point3d{-0.5, -0.13}, 0.075},
@@ -23,7 +24,7 @@ auto kShowNumSolutions = true;
 auto kEditor = Witness<kPuzzleWidth, kPuzzleHeight>{};
 static auto kLastPosition = point3d{-1, -1};
 
-static void DrawGameViewport(unsigned id) {
+static void DrawGameViewport(const std::size_t id) {
     auto &display = GetContext(id)->display;
     if (!kDrawEditor) {
         kPuzzle.Draw(display);
@@ -39,13 +40,20 @@ static void DrawGameViewport(unsigned id) {
     if (kShowNumSolutions)
         display.DrawText("# of solutions: ", point3d{0.75, -0.95}, Colors::black, 0.075,
                          Graphics::textAlignRight, Graphics::textBaselineTop);
+    if (!kBest.empty()) {
+        display.DrawText(
+            (std::to_string(kCurrentBest + 1) + std::string(" of ") + std::to_string(kBest.size()))
+                .c_str(),
+            point3d{1, 1}, Colors::black, 0.075, Graphics::textAlignRight,
+            Graphics::textBaselineBottom);
+    }
     if (kSelectedEditorItem != -1 && kCursorViewport == 0) {
         if (kSelectedEditorItem < kRegionConstraintItems.size()) {
             bool cursorInPuzzle = false;
             const auto &constraint = kRegionConstraintItems[kSelectedEditorItem].constraint;
             for (auto i = 0; i < kEditor.regionConstraintLocations.size(); ++i) {
-                const auto &[position, rect] = kEditor.regionConstraintLocations[i];
-                if (PointInRect(kCursor, rect)) {
+                if (const auto &[position, rect] = kEditor.regionConstraintLocations[i];
+                    PointInRect(kCursor, rect)) {
                     auto [x, y] = kEditor.GetRegionXYFromIndex(i);
                     if (position != kLastPosition) {
                         (constraint == kEditor.GetRegionConstraint(x, y))
@@ -67,8 +75,8 @@ static void DrawGameViewport(unsigned id) {
             if (!cursorInPuzzle) kEditor.DrawRegionConstraint(display, constraint, kCursor);
         } else {
             for (auto i = 0; i < kEditor.pathConstraintLocations.size() - 1; ++i) {
-                const auto &[position, rect] = kEditor.pathConstraintLocations[i];
-                if (PointInRect(kCursor, rect) &&
+                if (const auto &[position, rect] = kEditor.pathConstraintLocations[i];
+                    PointInRect(kCursor, rect) &&
                     i != kPuzzleWidth * (kPuzzleHeight + 1) + (kPuzzleWidth + 1) * kPuzzleHeight) {
                     const auto &constraint =
                         kPathConstraintItems[kSelectedEditorItem - kRegionConstraintItems.size()]
@@ -98,24 +106,27 @@ static void DrawGameViewport(unsigned id) {
     }
 }
 
-static void DrawEditorViewport(unsigned id) {
+static void DrawEditorViewport(const std::size_t id) {
     if (!kDrawEditor) return;
 
     auto &display = GetContext(id)->display;
     auto rect = Graphics::rect{-1.0, -1.0, 1.0, 1.0};
-    auto numRCItems = kRegionConstraintItems.size();
+    const auto numRCItems = kRegionConstraintItems.size();
 
     display.FillRect(rect, Colors::gray);
     display.DrawText("Select a constraint", {-0.8, -0.8}, Colors::black, 0.1);
     display.DrawText("Region Constraint", {-0.8, -0.65}, Colors::black, 0.065);
     for (auto i = 0; i < numRCItems; ++i) {
-        const auto &[constraint, c, radius] = kRegionConstraintItems[i];
-        kEditor.DrawRegionConstraint(display, constraint, c);
-        rect = {c, radius + 0.01f};
-        if (i == kSelectedEditorItem)
-            display.FrameRect(rect, Colors::white, 0.01);
-        else if (kCursorViewport == 1 && PointInRect(kCursor, rect))
-            display.FrameRect(rect, Colors::lightgray, 0.01);
+        if (const auto &[constraint, c, radius] = kRegionConstraintItems[i];
+            constraint.type != kUnknownRegionConstraint ||
+            kEditor.constraintCount[kUnknownRegionConstraint] < 4) {
+            kEditor.DrawRegionConstraint(display, constraint, c);
+            rect = {c, radius + 0.01f};
+            if (i == kSelectedEditorItem)
+                display.FrameRect(rect, Colors::white, 0.01);
+            else if (kCursorViewport == 1 && PointInRect(kCursor, rect))
+                display.FrameRect(rect, Colors::lightgray, 0.01);
+        }
     }
 
     display.DrawText("Path Constraint", {-0.8, -0.27}, Colors::black, 0.065);
@@ -157,7 +168,7 @@ static void DrawEditorViewport(unsigned id) {
         display.FrameRect(rect, Colors::lightgray, 0.01);
 }
 
-void FrameHandler(std::size_t id, unsigned viewport, void * /*data*/) {
+void FrameHandler(const std::size_t id, const unsigned viewport, void * /*data*/) {
     switch (viewport) {
         case 0:
             DrawGameViewport(id);

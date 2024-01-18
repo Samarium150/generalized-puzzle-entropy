@@ -1,4 +1,4 @@
-// noinspection DuplicatedCode, JSUnresolvedReference
+// noinspection JSUnresolvedReference
 
 "use strict";
 /* eslint-disable -- external utilities */
@@ -51,20 +51,9 @@ async function _load() {
 }
 /* eslint-enable -- external utilities */
 
-document.getElementsByTagName("body")[0].onload = () => {
-  const canvas = document.getElementById("fg");
-  if (canvas) {
-    const ctx = canvas.getContext("2d");
-    ctx.font = "30px Arial";
-    ctx.fillStyle = "black";
-    ctx.textAlign = "center";
-    ctx.fillText("Loading...", canvas.width / 2, canvas.height / 2);
-  }
-};
-
-document
-  .getElementById("message")
-  .addEventListener("keydown", async (event) => {
+const message = document.getElementById("message");
+if (message)
+  message.addEventListener("keydown", async (event) => {
     switch (event.key) {
       case "+":
         await _load();
