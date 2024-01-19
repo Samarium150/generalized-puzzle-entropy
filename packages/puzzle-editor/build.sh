@@ -13,9 +13,10 @@ cmake -B dist -S . \
   -DCMAKE_CXX_COMPILER=lib/emsdk/upstream/emscripten/em++ \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_TOOLCHAIN_FILE=lib/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake
-cmake --build dist --target editor
+cmake --build dist
 if ls dist/src/editor.* >/dev/null 2>&1; then
-  cp dist/src/editor.* ../../apps/web/public/js/
+  cp dist/src/*.js ../../apps/web/public/js/
+  cp dist/src/*.wasm ../../apps/web/public/js/
   cp src/utils.js ../../apps/web/public/js/utils.js
 else
   exit 1

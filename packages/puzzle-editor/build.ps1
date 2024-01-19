@@ -14,9 +14,10 @@ cmake -B dist -S . `
   -DCMAKE_CXX_COMPILER="lib\emsdk\upstream\emscripten\em++" `
   -DCMAKE_BUILD_TYPE=Release `
   -DCMAKE_TOOLCHAIN_FILE="lib\emsdk\upstream\emscripten\cmake\Modules\Platform\Emscripten.cmake"
-cmake --build dist --target editor
+cmake --build dist
 if (Test-Path -Path "dist\src\editor.*" -PathType Leaf) {
-  Copy-Item -Path "dist\src\editor.*" -Destination "..\..\apps\web\public\js"
+  Copy-Item -Path "dist\src\*.js" -Destination "..\..\apps\web\public\js"
+  Copy-Item -Path "dist\src\*.wasm" -Destination "..\..\apps\web\public\js"
   Copy-Item -Path "src\utils.js" -Destination "..\..\apps\web\public\js"
 } else {
   Exit 1

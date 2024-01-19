@@ -207,9 +207,13 @@ export function Editor(): React.JSX.Element {
   };
 
   return (
-    <Space direction="vertical" size="middle">
+    <Space
+      direction="vertical"
+      size="middle"
+      style={{ width: "-webkit-fill-available" }}
+    >
       <Row>
-        <Col flex="950px">
+        <Col flex="920px">
           <WASMModule height={450} module={module} ref={message} width={900} />
         </Col>
         <Col flex="auto">
