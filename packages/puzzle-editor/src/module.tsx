@@ -1,7 +1,4 @@
 /// <reference types="emscripten" />
-// noinspection JSUnresolvedReference
-
-"use client";
 import { forwardRef, memo, type Ref, useEffect, useRef } from "react";
 
 import "./module.css";
