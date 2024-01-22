@@ -9,7 +9,7 @@
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
     "@ant-design/nextjs-registry": "^1.0.0",
-    "antd": "^5.12.8",
+    "antd": "^5.13.2",
     "next": "^14.0.4",
     "puzzle-editor": "workspace:*",
     "react": "^18.2.0",
