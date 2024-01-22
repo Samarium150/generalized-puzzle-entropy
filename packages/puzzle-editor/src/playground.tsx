@@ -9,10 +9,15 @@ export function Playground(): JSX.Element {
   const [module, setModule] = useState(new ParsedModule());
 
   useEffect(() => {
-    getModule("PlaygroundModule")
-      .then(setModule)
-      // eslint-disable-next-line no-console -- load WASM failed
-      .catch(console.error);
+    const load = (): void => {
+      getModule("PlaygroundModule")
+        .then(setModule)
+        // eslint-disable-next-line no-console -- load WASM failed
+        .catch(console.error);
+    };
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === "development")
+      return load;
+    load();
   }, []);
 
   return (

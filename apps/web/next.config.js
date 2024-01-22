@@ -1,10 +1,8 @@
 // noinspection SpellCheckingInspection
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  transpilePackages: ["puzzle-editor"],
-  headers: async () => {
+/** @type {import("next").NextConfig} */
+module.exports = {
+  async headers() {
     return [
       {
         source: "/(.*)",
@@ -21,6 +19,5 @@ const nextConfig = {
       },
     ];
   },
+  transpilePackages: ["puzzle-editor"],
 };
-
-module.exports = nextConfig;

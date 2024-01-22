@@ -42,13 +42,18 @@ export function Editor(): React.JSX.Element {
   const [activeKey, setActiveKey] = useState("0");
 
   useEffect(() => {
-    getModule("EditorModule")
-      .then(setModule)
-      // eslint-disable-next-line no-console -- load WASM failed
-      .catch(console.error);
     setTimeout(() => {
       setSuggestionDisabled(false);
     }, 5000);
+    const load = (): void => {
+      getModule("EditorModule")
+        .then(setModule)
+        // eslint-disable-next-line no-console -- load WASM failed
+        .catch(console.error);
+    };
+    if (!process.env.NODE_ENV || process.env.NODE_ENV === "development")
+      return load;
+    load();
   }, []);
 
   const propose = (data: Data): void => {
