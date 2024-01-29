@@ -20,7 +20,7 @@ const menuItems: MenuProps["items"] = [
 ];
 
 export default function Page(): JSX.Element {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   return (
     <Layout
       className="w-screen overflow-y-visible"

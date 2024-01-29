@@ -38,6 +38,7 @@ extern int kSelectedEditorItem;
 
 constexpr int kPuzzleWidth = 4;
 constexpr int kPuzzleHeight = 4;
+constexpr unsigned kMaxNumUnknowns = 4;
 extern Witness<kPuzzleWidth, kPuzzleHeight> kPuzzle;
 extern Witness<kPuzzleWidth, kPuzzleHeight> kEditor;
 extern WitnessState<kPuzzleWidth, kPuzzleHeight> kState;
@@ -53,3 +54,5 @@ extern unsigned kNumSolutions;
 extern bool kShowNumSolutions;
 extern unsigned kSolutionIndex;
 extern unsigned kCurrentBest;
+[[maybe_unused]] extern std::size_t kTotalWorkload;
+extern std::size_t kCounter;

@@ -11,7 +11,8 @@ auto kRegionConstraintItems = std::vector<RegionConstraintItem>{
 auto kPathConstraintItems =
     std::vector<PathConstraintItem>{{kNoPathConstraint, point3d{-0.7, -0.13}, 0.075},
                                     {kMustCross, point3d{-0.5, -0.13}, 0.075},
-                                    {kCannotCross, point3d{-0.3, -0.13}, 0.075}};
+                                    {kCannotCross, point3d{-0.3, -0.13}, 0.075},
+                                    {kUnknownPathConstraint, point3d{-0.1, -0.13}, 0.075}};
 auto kColorItems = std::vector<ColorItem>{
     {Colors::black, point3d{-0.7, 0.3}, 0.1},   {Colors::cyan, point3d{-0.5, 0.3}, 0.1},
     {Colors::magenta, point3d{-0.3, 0.3}, 0.1}, {Colors::yellow, point3d{-0.1, 0.3}, 0.1},
@@ -22,6 +23,8 @@ auto kDrawEditor = false;
 auto kNumSolutions = 0u;
 auto kShowNumSolutions = true;
 auto kEditor = Witness<kPuzzleWidth, kPuzzleHeight>{};
+[[maybe_unused]] auto kTotalWorkload = 0ul;
+auto kCounter = 0ul;
 static auto kLastPosition = point3d{-1, -1};
 
 static void DrawGameViewport(const std::size_t id) {
@@ -111,15 +114,14 @@ static void DrawEditorViewport(const std::size_t id) {
 
     auto &display = GetContext(id)->display;
     auto rect = Graphics::rect{-1.0, -1.0, 1.0, 1.0};
-    const auto numRCItems = kRegionConstraintItems.size();
 
     display.FillRect(rect, Colors::gray);
     display.DrawText("Select a constraint", {-0.8, -0.8}, Colors::black, 0.1);
     display.DrawText("Region Constraint", {-0.8, -0.65}, Colors::black, 0.065);
-    for (auto i = 0; i < numRCItems; ++i) {
+    for (auto i = 0; i < kRegionConstraintItems.size(); ++i) {
         if (const auto &[constraint, c, radius] = kRegionConstraintItems[i];
             constraint.type != kUnknownRegionConstraint ||
-            kEditor.constraintCount[kUnknownRegionConstraint] < 4) {
+            kEditor.GetNumUnknownConstraints() < kMaxNumUnknowns) {
             kEditor.DrawRegionConstraint(display, constraint, c);
             rect = {c, radius + 0.01f};
             if (i == kSelectedEditorItem)
@@ -133,18 +135,34 @@ static void DrawEditorViewport(const std::size_t id) {
     for (auto i = 0; i < kPathConstraintItems.size(); ++i) {
         const auto &[constraint, c, radius] = kPathConstraintItems[i];
         rect = {c, radius + 0.01f};
-        if (i == kSelectedEditorItem - numRCItems)
-            display.FillRect(rect, Colors::green);
-        else if (kCursorViewport == 1 && PointInRect(kCursor, rect))
-            display.FillRect(rect, Colors::lightgray);
-        else
-            display.FillRect(rect, Colors::white);
-        display.FillRect({c.x - radius, c.y - 0.025f, c.x + radius, c.y + 0.025f},
-                         kPuzzle.drawColor);
-        if (constraint == kCannotCross)
-            display.FillRect({c, 0.025}, kPuzzle.backColor);
-        else if (constraint == kMustCross)
-            display.FillNGon(c, 0.025, 6, 30, kPuzzle.backColor);
+        if (constraint != kUnknownPathConstraint ||
+            kEditor.GetNumUnknownConstraints() < kMaxNumUnknowns) {
+            if (i == kSelectedEditorItem - kRegionConstraintItems.size())
+                display.FillRect(rect, Colors::green);
+            else if (kCursorViewport == 1 && PointInRect(kCursor, rect))
+                display.FillRect(rect, Colors::lightgray);
+            else
+                display.FillRect(rect, Colors::white);
+        }
+        switch (constraint) {
+            case kMustCross:
+                display.FillRect({c.x - radius, c.y - 0.025f, c.x + radius, c.y + 0.025f},
+                                 kEditor.drawColor);
+                display.FillNGon(c, 0.025, 6, 30, kPuzzle.backColor);
+                break;
+            case kCannotCross:
+                display.FillRect({c.x - radius, c.y - 0.025f, c.x + radius, c.y + 0.025f},
+                                 kEditor.drawColor);
+                display.FillRect({c, 0.025}, kPuzzle.backColor);
+                break;
+            case kUnknownPathConstraint:
+                if (kEditor.GetNumUnknownConstraints() < kMaxNumUnknowns)
+                    display.DrawText("?", c, Colors::black, kEditor.lineWidth * 2.25f,
+                                     Graphics::textAlignCenter, Graphics::textBaselineMiddle);
+                break;
+            default:
+                break;
+        }
     }
 
     display.DrawText("Change Color", {-0.8, 0.17}, Colors::black, 0.1);

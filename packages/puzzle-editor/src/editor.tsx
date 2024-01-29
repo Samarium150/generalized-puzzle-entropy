@@ -7,7 +7,7 @@ import {
   RightCircleOutlined,
 } from "@ant-design/icons";
 import { Button, Card, Col, Empty, Row, Space, Typography } from "antd";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getModule, ParsedModule, WASMModule } from "./module";
 
 interface Data {
@@ -24,12 +24,11 @@ interface TabTitle {
 }
 
 type TargetKey = string | React.MouseEvent | React.KeyboardEvent;
-type TabContent = Map<string, React.ReactNode>;
 
 const { Link, Paragraph, Text } = Typography;
 
 export function Editor(): React.JSX.Element {
-  const items: TabContent = new Map();
+  const items = new Map<string, React.ReactNode>();
   const message = useRef<HTMLDivElement>(null);
   const newTabIndex = useRef(-1);
 
@@ -38,13 +37,13 @@ export function Editor(): React.JSX.Element {
   const [suggestion, setSuggestion] = useState<React.ReactNode>();
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [tabs, setTabs] = useState<TabTitle[]>([]);
-  const [tabItems, setTabItems] = useState<TabContent>(items);
+  const [tabItems, setTabItems] = useState(items);
   const [activeKey, setActiveKey] = useState("0");
 
   useEffect(() => {
     setTimeout(() => {
       setSuggestionDisabled(false);
-    }, 5000);
+    }, 2000);
     const load = (): void => {
       getModule("EditorModule")
         .then(setModule)
@@ -56,101 +55,114 @@ export function Editor(): React.JSX.Element {
     load();
   }, []);
 
-  const propose = (data: Data): void => {
-    const result = (
-      <Space direction="vertical">
-        <Paragraph>
-          <ul>
-            {data.numConstraints < 4 ? (
-              <li>
-                <Text type="danger">Try adding more constraints</Text>
-              </li>
-            ) : null}
-            {(() => {
-              if (data.numSolution === 0) {
-                return (
-                  <li>
-                    <Text type="danger">The puzzle is unsolvable</Text>
-                  </li>
-                );
-              } else if (data.numSolution > 10) {
-                return (
-                  <li>
-                    <Text type="danger">
-                      The puzzle has too many solutions.
-                    </Text>
-                  </li>
-                );
-              }
-              return null;
-            })()}
-            {(() => {
-              if (data.entropy < 3) {
-                return (
-                  <li>
-                    <Text type="danger">
-                      Player can deduce solutions easily
-                    </Text>
-                  </li>
-                );
-              } else if (data.entropy > 8) {
-                return (
-                  <li>
-                    <Text type="success">The puzzle is hard to solve</Text>
-                  </li>
-                );
-              }
-              return null;
-            })()}
-            {(() => {
-              if (data.advEntropy < 3) {
-                return (
-                  <li>
-                    <Text type="danger">
-                      Players can easily notice mistakes
-                    </Text>
-                  </li>
-                );
-              } else if (data.advEntropy > 8) {
-                return (
-                  <li>
-                    <Text type="success">
-                      Many paths don&apos;t lead to goal (generally good)
-                    </Text>
-                  </li>
-                );
-              }
-              return null;
-            })()}
-          </ul>
-        </Paragraph>
-        {data.numBest > 0 ? (
-          <Space direction="vertical">
-            <Text>Show suggested puzzles</Text>
-            <Space direction="horizontal">
-              <Button
-                onClick={() => {
-                  module.keyEvent("[");
-                }}
-                type="primary"
-              >
-                prev
-              </Button>
-              <Button
-                onClick={() => {
-                  module.keyEvent("]");
-                }}
-                type="primary"
-              >
-                next
-              </Button>
+  const propose = useCallback(
+    (data: Data): void => {
+      const result = (
+        <Space direction="vertical">
+          <Paragraph>
+            <ul>
+              {data.numConstraints < 4 ? (
+                <li>
+                  <Text type="danger">Try adding more constraints</Text>
+                </li>
+              ) : null}
+              {(() => {
+                if (data.numSolution === 0) {
+                  return (
+                    <li>
+                      <Text type="danger">The puzzle is unsolvable</Text>
+                    </li>
+                  );
+                } else if (data.numSolution > 10) {
+                  return (
+                    <li>
+                      <Text type="danger">
+                        The puzzle has too many solutions.
+                      </Text>
+                    </li>
+                  );
+                }
+                return null;
+              })()}
+              {(() => {
+                if (data.entropy < 3) {
+                  return (
+                    <li>
+                      <Text type="danger">
+                        Player can deduce solutions easily
+                      </Text>
+                    </li>
+                  );
+                } else if (data.entropy > 8) {
+                  return (
+                    <li>
+                      <Text type="success">The puzzle is hard to solve</Text>
+                    </li>
+                  );
+                }
+                return null;
+              })()}
+              {(() => {
+                if (data.advEntropy < 3) {
+                  return (
+                    <li>
+                      <Text type="danger">
+                        Players can easily notice mistakes
+                      </Text>
+                    </li>
+                  );
+                } else if (data.advEntropy > 8) {
+                  return (
+                    <li>
+                      <Text type="success">
+                        Many paths don&apos;t lead to goal (generally good)
+                      </Text>
+                    </li>
+                  );
+                }
+                return null;
+              })()}
+            </ul>
+          </Paragraph>
+          {data.numBest > 0 ? (
+            <Space direction="vertical">
+              <Text>Show suggested puzzles</Text>
+              <Space direction="horizontal">
+                <Button
+                  onClick={() => {
+                    module.keyEvent("[");
+                  }}
+                  type="primary"
+                >
+                  prev
+                </Button>
+                <Button
+                  onClick={() => {
+                    module.keyEvent("]");
+                  }}
+                  type="primary"
+                >
+                  next
+                </Button>
+              </Space>
             </Space>
-          </Space>
-        ) : null}
-      </Space>
-    );
-    setSuggestion(result);
-  };
+          ) : null}
+        </Space>
+      );
+      setSuggestion(result);
+    },
+    [module],
+  );
+
+  useEffect(() => {
+    if (message.current?.innerHTML) {
+      try {
+        propose(JSON.parse(message.current.innerHTML) as Data);
+      } catch (_) {
+        /* empty */
+      }
+    }
+  }, [message.current?.innerHTML, propose]);
 
   const validate = (url: string | undefined): boolean => {
     if (!url) return false;
@@ -216,7 +228,7 @@ export function Editor(): React.JSX.Element {
       size="middle"
       style={{ width: "-webkit-fill-available" }}
     >
-      <Row>
+      <Row wrap={false}>
         <Col flex="920px">
           <WASMModule height={450} module={module} ref={message} width={900} />
         </Col>
@@ -237,14 +249,13 @@ export function Editor(): React.JSX.Element {
                 Generate
               </Button>
             }
-            style={{ width: "100%" }}
             title="Suggestions"
           >
             {suggestion ?? <Empty description={false} />}
           </Card>
         </Col>
       </Row>
-      <Row>
+      <Row wrap={false}>
         <Col flex="14rem">
           <Button
             icon={

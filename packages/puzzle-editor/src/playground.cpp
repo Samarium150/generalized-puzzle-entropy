@@ -43,7 +43,7 @@ void KeyboardHandler(std::size_t /*id*/, tKeyboardModifier /*mod*/, const char k
             auto witness = Witness<kPuzzleWidth, kPuzzleHeight>();
             ss >> witness;
             kPuzzle = witness;
-            UpdateSolutionIndices();
+            std::thread(UpdateSolutionIndices).detach();
             break;
         }
         case 'r':

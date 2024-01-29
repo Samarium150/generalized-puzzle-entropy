@@ -8,27 +8,22 @@ struct SolutionTreeNode {
     WitnessAction action = kStart;
     std::array<int, kWitnessActionCount> children{};
 
-    explicit SolutionTreeNode(const WitnessAction action) : action(action) {
-        children.fill(-1);
-    }
+    explicit SolutionTreeNode(const WitnessAction action) : action(action) { children.fill(-1); }
 };
 
 extern std::vector<SolutionTreeNode> kSolutionTree;
 
-inline int InsertNode(std::vector<SolutionTreeNode> &tree,
-                      const int parent_index, WitnessAction action) {
+inline int InsertNode(std::vector<SolutionTreeNode>& tree, const int parent_index,
+                      WitnessAction action) {
     const auto index = static_cast<int>(tree.size());
     tree.emplace_back(action);
-    if (parent_index != -1)
-        tree[parent_index].children[static_cast<std::size_t>(action)] = index;
+    if (parent_index != -1) tree[parent_index].children[static_cast<std::size_t>(action)] = index;
     return index;
 }
 
-[[maybe_unused]] inline void PrintTree(
-    const std::vector<SolutionTreeNode> &tree) {
+[[maybe_unused]] inline void PrintTree(const std::vector<SolutionTreeNode>& tree) {
     for (auto i = 0; i < tree.size(); ++i) {
-        std::cout << "Node " << i << ": Action = " << tree[i].action
-                  << ", Children = ";
+        std::cout << "Node " << i << ": Action = " << tree[i].action << ", Children = ";
         for (const auto childIndex : tree[i].children) {
             if (childIndex != -1) std::cout << childIndex << " ";
         }
@@ -37,9 +32,9 @@ inline int InsertNode(std::vector<SolutionTreeNode> &tree,
 }
 
 template <int width, int height>
-void BuildTree(const Witness<width, height> &puzzle,
-               const std::vector<WitnessState<width, height>> &solutions,
-               std::vector<SolutionTreeNode> &tree) {
+void BuildTree(const Witness<width, height>& puzzle,
+               const std::vector<WitnessState<width, height>>& solutions,
+               std::vector<SolutionTreeNode>& tree) {
     tree.clear();
     tree.reserve(std::numeric_limits<uint16_t>::max());
     Witness<width, height> w;
@@ -49,17 +44,15 @@ void BuildTree(const Witness<width, height> &puzzle,
     //                    if (constraint == kMustCross)
     //                        constraint = kNoPathConstraint;
     //                });
-    auto &actions = *w.actionCache.getItem();
+    auto& actions = *w.actionCache.getItem();
     InsertNode(tree, -1, kStart);
-    for (const auto &solution : solutions) {
+    for (const auto& solution : solutions) {
         if (!w.GoalTest(solution)) continue;
         int index = 0;
         w.GetActionSequence(solution, actions);
         for (auto i = 1; i < actions.size(); ++i) {
-            const auto &action = actions[i];
-            if (const int child =
-                    tree[index].children[static_cast<unsigned>(action)];
-                child == -1)
+            const auto& action = actions[i];
+            if (const int child = tree[index].children[static_cast<unsigned>(action)]; child == -1)
                 index = InsertNode(tree, index, action);
             else
                 index = child;
@@ -70,18 +63,16 @@ void BuildTree(const Witness<width, height> &puzzle,
     tree.shrink_to_fit();
 }
 
-static bool CompareSC(const WitnessRegionConstraint &a,
-                      const WitnessRegionConstraint &b) {
+static bool CompareSC(const WitnessRegionConstraint& a, const WitnessRegionConstraint& b) {
     return a.type == kSeparation && b.type == kSeparation && a != b;
 }
 
 template <int width, int height>
-ActionType SeparationRule(
-    const SearchEnvironment<WitnessState<width, height>, WitnessAction> &env,
-    const WitnessState<width, height> &state, const WitnessAction &action) {
+ActionType SeparationRule(const SearchEnvironment<WitnessState<width, height>, WitnessAction>& env,
+                          const WitnessState<width, height>& state, const WitnessAction& action) {
     if (state.path.empty()) return UNKNOWN;
-    const auto &witness = static_cast<const Witness<width, height> &>(env);
-    const auto &[currX, currY] = state.path.back();
+    const auto& witness = static_cast<const Witness<width, height>&>(env);
+    const auto& [currX, currY] = state.path.back();
     switch (action) {
         case kUp: {
             if (currX > 0 && currX < width &&
@@ -116,7 +107,7 @@ ActionType SeparationRule(
     }
     if (witness.constraintCount[kStar] > 0) {
         witness.GetLeftRightRegions(state);
-        for (const auto &[color, regions] : witness.colorMap) {
+        for (const auto& [color, regions] : witness.colorMap) {
             if (regions.size() == 2) {
                 int r1 = regions[0];
                 int r2 = regions[1];
@@ -134,38 +125,30 @@ ActionType SeparationRule(
 
 template <int width, int height>
 ActionType PathConstraintRule(
-    const SearchEnvironment<WitnessState<width, height>, WitnessAction> &env,
-    const WitnessState<width, height> &state, const WitnessAction &action) {
+    const SearchEnvironment<WitnessState<width, height>, WitnessAction>& env,
+    const WitnessState<width, height>& state, const WitnessAction& action) {
     if (state.path.empty()) return UNKNOWN;
-    const auto &witness = static_cast<const Witness<width, height> &>(env);
-    const auto &[currX, currY] = state.path.back();
+    const auto& witness = static_cast<const Witness<width, height>&>(env);
+    const auto& [currX, currY] = state.path.back();
     switch (action) {
         case kUp: {
-            if (witness.GetMustCrossConstraint(false, currX, currY))
-                return MUST_TAKE;
-            if (witness.GetCannotCrossConstraint(false, currX, currY))
-                return CANNOT_TAKE;
+            if (witness.GetMustCrossConstraint(false, currX, currY)) return MUST_TAKE;
+            if (witness.GetCannotCrossConstraint(false, currX, currY)) return CANNOT_TAKE;
             break;
         }
         case kRight: {
-            if (witness.GetMustCrossConstraint(true, currX, currY))
-                return MUST_TAKE;
-            if (witness.GetCannotCrossConstraint(true, currX, currY))
-                return CANNOT_TAKE;
+            if (witness.GetMustCrossConstraint(true, currX, currY)) return MUST_TAKE;
+            if (witness.GetCannotCrossConstraint(true, currX, currY)) return CANNOT_TAKE;
             break;
         }
         case kDown: {
-            if (witness.GetMustCrossConstraint(false, currX, currY - 1))
-                return MUST_TAKE;
-            if (witness.GetCannotCrossConstraint(false, currX, currY - 1))
-                return CANNOT_TAKE;
+            if (witness.GetMustCrossConstraint(false, currX, currY - 1)) return MUST_TAKE;
+            if (witness.GetCannotCrossConstraint(false, currX, currY - 1)) return CANNOT_TAKE;
             break;
         }
         case kLeft: {
-            if (witness.GetMustCrossConstraint(true, currX - 1, currY))
-                return MUST_TAKE;
-            if (witness.GetCannotCrossConstraint(true, currX - 1, currY))
-                return CANNOT_TAKE;
+            if (witness.GetMustCrossConstraint(true, currX - 1, currY)) return MUST_TAKE;
+            if (witness.GetCannotCrossConstraint(true, currX - 1, currY)) return CANNOT_TAKE;
             break;
         }
         default:
@@ -176,19 +159,18 @@ ActionType PathConstraintRule(
 
 template <int width, int height>
 ActionType InsideSolutionTreeRule(
-    const SearchEnvironment<WitnessState<width, height>, WitnessAction> &env,
-    const WitnessState<width, height> &state, const WitnessAction &action) {
+    const SearchEnvironment<WitnessState<width, height>, WitnessAction>& env,
+    const WitnessState<width, height>& state, const WitnessAction& action) {
     if (action == kStart || action == kEnd) return MUST_TAKE;
     if (kSolutionTree.empty()) return UNKNOWN;
-    const auto &witness = static_cast<const Witness<width, height> &>(env);
-    auto &actions = *witness.actionCache.getItem();
+    const auto& witness = static_cast<const Witness<width, height>&>(env);
+    auto& actions = *witness.actionCache.getItem();
     actions.clear();
     witness.GetActionSequence(state, actions);
     actions.emplace_back(action);
     int index = 0;
     for (auto i = 1; i < actions.size(); ++i) {
-        index =
-            kSolutionTree[index].children[static_cast<unsigned>(actions[i])];
+        index = kSolutionTree[index].children[static_cast<unsigned>(actions[i])];
         if (index == -1) {
             witness.actionCache.returnItem(&actions);
             return CANNOT_TAKE;
@@ -200,16 +182,15 @@ ActionType InsideSolutionTreeRule(
 
 template <int width, int height>
 ActionType RegionCompletionRule(
-    const SearchEnvironment<WitnessState<width, height>, WitnessAction> &env,
-    WitnessState<width, height> &state, const WitnessAction &action) {
+    const SearchEnvironment<WitnessState<width, height>, WitnessAction>& env,
+    WitnessState<width, height>& state, const WitnessAction& action) {
     if (state.path.empty()) return UNKNOWN;
-    const auto &witness = static_cast<const Witness<width, height> &>(env);
+    const auto& witness = static_cast<const Witness<width, height>&>(env);
     witness.ApplyAction(state, action);
     bool regionSatisfied = true;
-    if (const auto &head = state.path.back();
+    if (const auto& head = state.path.back();
         (state.HitTheWall() && !state.IsAlongTheWall()) ||
-        (contains(witness.goal, head) &&
-         witness.goalMap[witness.GetPathIndex(head)] != 0))
+        (contains(witness.goal, head) && witness.goalMap[witness.GetPathIndex(head)] != 0))
         regionSatisfied = witness.RegionTest(state);
     witness.UndoAction(state, action);
     return regionSatisfied ? UNKNOWN : CANNOT_TAKE;
@@ -217,12 +198,12 @@ ActionType RegionCompletionRule(
 
 template <int width, int height>
 ActionType AlongThePathRule(
-    const SearchEnvironment<WitnessState<width, height>, WitnessAction> &env,
-    WitnessState<width, height> &state, const WitnessAction &action) {
+    const SearchEnvironment<WitnessState<width, height>, WitnessAction>& env,
+    WitnessState<width, height>& state, const WitnessAction& action) {
     if (state.path.empty()) return UNKNOWN;
-    const auto &witness = static_cast<const Witness<width, height> &>(env);
+    const auto& witness = static_cast<const Witness<width, height>&>(env);
     witness.ApplyAction(state, action);
-    bool satisfied = witness.PathTest(state);
+    const bool satisfied = witness.PathTest(state);
     witness.UndoAction(state, action);
     return satisfied ? UNKNOWN : CANNOT_TAKE;
 }
@@ -236,8 +217,7 @@ enum WitnessInferenceRule {
     kInferenceRuleCount [[maybe_unused]]
 };
 
-inline std::ostream &operator<<(std::ostream &os,
-                                const WitnessInferenceRule rule) {
+inline std::ostream& operator<<(std::ostream& os, const WitnessInferenceRule rule) {
     switch (rule) {
         case kSeparationRule:
             return os << "SeparationRule";
@@ -255,11 +235,9 @@ inline std::ostream &operator<<(std::ostream &os,
 }
 
 template <int width, int height>
-std::unordered_map<
-    int,
-    std::function<ActionType(
-        const SearchEnvironment<WitnessState<width, height>, WitnessAction> &,
-        WitnessState<width, height> &, const WitnessAction &)>>
+std::unordered_map<int, std::function<ActionType(
+                            const SearchEnvironment<WitnessState<width, height>, WitnessAction>&,
+                            WitnessState<width, height>&, const WitnessAction&)>>
     kWitnessInferenceRules = {
         {kSeparationRule, SeparationRule<width, height>},
         {kPathConstraintRule, PathConstraintRule<width, height>},

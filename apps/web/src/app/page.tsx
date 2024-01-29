@@ -21,7 +21,7 @@ const menuItems: MenuProps["items"] = [
 ];
 
 export default function Home(): JSX.Element {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [showInstructions, setShowInstructions] = useState(true);
 
   return (
@@ -78,9 +78,9 @@ export default function Home(): JSX.Element {
                   constraint of the same color regardless the type of it.
                 </li>
                 <li>
-                  Question marks are used for letting AI suggest a good region
-                  constraint. The maximum number of question marks is 4. AI will
-                  propose suggestions by clicking the{" "}
+                  Question marks are used for letting AI suggest a good
+                  region/path constraint. The maximum number of question marks
+                  is 4. AI will propose suggestions by clicking the{" "}
                   <Text keyboard>Generate</Text> button on the right (the UI may
                   freeze).
                 </li>

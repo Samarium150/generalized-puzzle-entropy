@@ -10,7 +10,7 @@ target_link_options(editor PRIVATE
         -sINITIAL_MEMORY=200MB
         -sMODULARIZE=1
         -sEXPORT_NAME=EditorModule
-        -sPTHREAD_POOL_SIZE=4
+        -sPTHREAD_POOL_SIZE="navigator.hardwareConcurrency"
         -pthread
 )
 
@@ -21,9 +21,9 @@ target_link_libraries(playground PRIVATE hog2)
 target_link_options(playground PRIVATE
         -sEXPORTED_FUNCTIONS=["_InitHOG","_InitHOGArg","_DoFrame","_MouseEvent","_HitKey","_SetCanvasSize"]
         -sEXPORTED_RUNTIME_METHODS=["cwrap","stringToNewUTF8"]
-        -sINITIAL_MEMORY=1024MB
+        -sINITIAL_MEMORY=200MB
         -sMODULARIZE=1
         -sEXPORT_NAME=PlaygroundModule
-        -sPTHREAD_POOL_SIZE=4
+        -sPTHREAD_POOL_SIZE="navigator.hardwareConcurrency"
         -pthread
 )

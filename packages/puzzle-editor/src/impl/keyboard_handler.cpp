@@ -4,14 +4,10 @@
 
 auto kBest = std::vector<Witness<kPuzzleWidth, kPuzzleHeight>>{};
 auto kCurrentBest = 0u;
+auto kInferMutex = std::mutex();
 
-static void Calculate() {
+static void ProvideSuggestion() {
     auto ss = std::stringstream();
-    kBest.clear();
-    if (kPuzzle.constraintCount[kUnknownRegionConstraint] != 0) {
-        Infer();
-    }
-    UpdateEntropy(kPuzzle);
     ss << R"({ "numBest": )" << kBest.size() << R"(, "numConstraints": )"
        << std::count_if(kPuzzle.pathConstraints.cbegin(), kPuzzle.pathConstraints.cend(),
                         [](const auto &constraint) { return constraint != kNoPathConstraint; }) +
@@ -29,11 +25,22 @@ static void Calculate() {
     submitTextToBuffer(ss.str().c_str());
 }
 
+static void Calculate() {
+    kBest.clear();
+    if (kPuzzle.GetNumUnknownPathConstraints() != 0) {
+        Infer(kPuzzle);
+    }
+    UpdateEntropy(kPuzzle);
+    ProvideSuggestion();
+}
+
 static void Load(const std::size_t index) {
     kPuzzle = kBest[index];
     kIWS.Reset();
     kSolved = false;
     UpdateSolutionIndices();
+    UpdateEntropy(kPuzzle);
+    ProvideSuggestion();
 }
 
 void KeyboardHandler(const std::size_t id, tKeyboardModifier /*mod*/, const char key) {
@@ -79,7 +86,7 @@ void KeyboardHandler(const std::size_t id, tKeyboardModifier /*mod*/, const char
             ss >> witness;
             kPuzzle = witness;
             UpdateSolutionIndices();
-            UpdateEntropy(kPuzzle);
+            std::thread(UpdateEntropy, std::ref(kPuzzle)).detach();
             break;
         }
         case 'r':

@@ -1,3 +1,5 @@
+#include <thread>
+
 #include "handler.h"
 #include "solver_util.h"
 
@@ -47,14 +49,15 @@ bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/, 
                                                          kRegionConstraintItems.size()]
                                         .constraint;
                                 constraint == kEditor.pathConstraints[i])
-                                kPuzzle.pathConstraints[i] = kNoPathConstraint;
+                                kPuzzle.RemovePathConstraint(i);
                             else
-                                kPuzzle.pathConstraints[i] = constraint;
+                                kPuzzle.AddPathConstraint(i, constraint);
                             break;
                         }
                     }
                 }
-                UpdateSolutionIndices();
+                if (kPuzzle.GetNumUnknownConstraints() >= kMaxNumUnknowns) kSelectedEditorItem = -1;
+                std::thread(UpdateSolutionIndices).detach();
             }
             break;
         case 1:
@@ -91,7 +94,13 @@ bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/, 
                 if (!constraintSelected && !colorSelected) kSelectedEditorItem = -1;
                 if (PointInRect(p, {-0.81, 0.63, 0.07, 0.75}))
                     kShowNumSolutions = !kShowNumSolutions;
-                if (PointInRect(p, {0.42, 0.62, 0.81, 0.75})) kPuzzle.Reset();
+                if (PointInRect(p, {0.42, 0.62, 0.81, 0.75})) {
+                    kPuzzle.Reset();
+                    kIWS.Reset();
+                    kSolved = false;
+                    UpdateSolutionIndices();
+                    std::thread(UpdateEntropy, std::ref(kPuzzle)).detach();
+                }
             }
             break;
         default:
