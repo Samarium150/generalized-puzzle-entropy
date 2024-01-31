@@ -25,14 +25,9 @@ export default function Home(): JSX.Element {
   const [showInstructions, setShowInstructions] = useState(true);
 
   return (
-    <Layout
-      className="w-screen overflow-y-visible"
-      style={{ minHeight: "100vh" }}
-    >
-      <Header className="block text-center" style={{ height: "fit-content" }}>
-        <Title style={{ color: "white", margin: "0.1em 0" }}>
-          The Witness Puzzle Editor
-        </Title>
+    <Layout className="min-h-screen w-screen overflow-y-visible">
+      <Header className="block h-fit text-center">
+        <Title className="my-0.5 text-white">The Witness Puzzle Editor</Title>
       </Header>
       <Layout>
         <Sider collapsed={collapsed} collapsible onCollapse={setCollapsed}>
@@ -48,7 +43,7 @@ export default function Home(): JSX.Element {
           <Script src="/js/editor.worker.js" strategy="afterInteractive" />
           <Script src="/js/utils.js" strategy="afterInteractive" />
           <Flex gap="small" vertical>
-            <Title level={2} style={{ margin: "0.1em 0" }}>
+            <Title className="my-0.5" level={2}>
               Instructions{" "}
               <Switch
                 checkedChildren="shown"
@@ -60,9 +55,8 @@ export default function Home(): JSX.Element {
               />
             </Title>
             <Paragraph
-              className="w-2/3"
+              className="m-0 w-2/3"
               ellipsis={showInstructions ? false : { rows: 3 }}
-              style={{ margin: 0 }}
             >
               <ul>
                 <li>
@@ -109,7 +103,7 @@ export default function Home(): JSX.Element {
           </Flex>
         </Content>
       </Layout>
-      <Footer className="my-1 h-fit p-0 text-center" style={{ padding: "0" }}>
+      <Footer className="my-1 h-fit p-0 text-center">
         <Typography.Link href="https://movingai.com/" target="_blank">
           Moving AI Lab
         </Typography.Link>{" "}
