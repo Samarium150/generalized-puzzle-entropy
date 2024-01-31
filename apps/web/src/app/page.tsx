@@ -1,5 +1,6 @@
 "use client";
 import { EditOutlined, PlayCircleOutlined } from "@ant-design/icons";
+import { HappyProvider } from "@ant-design/happy-work-theme";
 import { Flex, Layout, Menu, type MenuProps, Switch, Typography } from "antd";
 import Link from "next/link";
 import Script from "next/script";
@@ -45,14 +46,16 @@ export default function Home(): JSX.Element {
           <Flex gap="small" vertical>
             <Title className="my-0.5" level={2}>
               Instructions{" "}
-              <Switch
-                checkedChildren="shown"
-                defaultChecked={showInstructions}
-                onChange={() => {
-                  setShowInstructions(!showInstructions);
-                }}
-                unCheckedChildren="hidden"
-              />
+              <HappyProvider>
+                <Switch
+                  checkedChildren="shown"
+                  defaultChecked={showInstructions}
+                  onChange={() => {
+                    setShowInstructions(!showInstructions);
+                  }}
+                  unCheckedChildren="hidden"
+                />
+              </HappyProvider>
             </Title>
             <Paragraph
               className="m-0 w-2/3"

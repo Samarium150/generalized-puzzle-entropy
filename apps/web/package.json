@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@ant-design/icons": "^5.2.6",
+    "@ant-design/happy-work-theme": "^1.0.0",
     "@ant-design/nextjs-registry": "^1.0.0",
     "antd": "^5.13.3",
     "next": "^14.1.0",

@@ -26,6 +26,9 @@ importers:
 
   apps/web:
     dependencies:
+      '@ant-design/happy-work-theme':
+        specifier: ^1.0.0
+        version: 1.0.0(antd@5.13.3)(react-dom@18.2.0)(react@18.2.0)
       '@ant-design/icons':
         specifier: ^5.2.6
         version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
@@ -96,6 +99,9 @@ importers:
 
   packages/puzzle-editor:
     dependencies:
+      '@ant-design/happy-work-theme':
+        specifier: ^1.0.0
+        version: 1.0.0(antd@5.13.3)(react-dom@18.2.0)(react@18.2.0)
       '@ant-design/icons':
         specifier: ^5.2.6
         version: 5.2.6(react-dom@18.2.0)(react@18.2.0)
@@ -174,6 +180,25 @@ packages:
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
       stylis: 4.3.1
+    dev: false
+
+  /@ant-design/happy-work-theme@1.0.0(antd@5.13.3)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-BKuz5PZkGZwXqzDwTE9fiHYlpKdDyoGnApEih2MG1GF79/a/YekxBc4tdqocykDtWzt3z1wwmHv8AiB7EUTWsQ==}
+    engines: {node: '>=8.x'}
+    peerDependencies:
+      antd: '>= 5.8.2'
+      react: '>=16.9.0'
+      react-dom: '>=16.9.0'
+    dependencies:
+      '@ant-design/cssinjs': 1.18.4(react-dom@18.2.0)(react@18.2.0)
+      '@babel/runtime': 7.23.9
+      '@ctrl/tinycolor': 3.6.1
+      antd: 5.13.3(react-dom@18.2.0)(react@18.2.0)
+      classnames: 2.5.1
+      rc-motion: 2.9.0(react-dom@18.2.0)(react@18.2.0)
+      rc-util: 5.38.1(react-dom@18.2.0)(react@18.2.0)
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /@ant-design/icons-svg@4.3.1:

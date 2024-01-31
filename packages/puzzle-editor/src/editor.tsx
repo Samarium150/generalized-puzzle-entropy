@@ -10,6 +10,7 @@ import {
   ReloadOutlined,
   RightCircleOutlined,
 } from "@ant-design/icons";
+import { HappyProvider } from "@ant-design/happy-work-theme";
 import { Button, Card, Col, Empty, Row, Space, Typography } from "antd";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getModule, ParsedModule, WASMModule } from "./module";
@@ -261,132 +262,139 @@ export function Editor(): React.JSX.Element {
   };
 
   return (
-    <Space
-      direction="vertical"
-      size="middle"
-      style={{ width: "-webkit-fill-available" }}
-    >
-      <Row wrap={false}>
-        <Col flex="920px">
-          <WASMModule height={450} module={module} ref={message} width={900} />
-        </Col>
-        <Col flex="auto">
-          <Card
-            extra={
-              <Button
-                disabled={suggestionDisabled}
-                icon={<BulbOutlined />}
-                onClick={() => {
-                  module.keyEvent("z");
-                  if (message.current?.innerHTML) {
-                    propose(JSON.parse(message.current.innerHTML) as Data);
-                  }
-                }}
-                type="link"
-              >
-                Generate
-              </Button>
-            }
-            title="Suggestions"
-          >
-            {suggestion ?? <Empty description={false} />}
-          </Card>
-        </Col>
-      </Row>
-      <Row wrap={false}>
-        <Col flex="14rem">
-          <Button
-            icon={
-              isEditorOpen ? <RightCircleOutlined /> : <LeftCircleOutlined />
-            }
-            onClick={() => {
-              module.keyEvent("e");
-              setIsEditorOpen(!isEditorOpen);
-            }}
-            shape="round"
-            size="large"
-            style={{ width: "13rem" }}
-            type="primary"
-          >
-            {`${isEditorOpen ? "Close" : "Open "} editor panel`}
-          </Button>
-        </Col>
-        <Col flex="14rem">
-          <Button
-            icon={<ReloadOutlined rotate={90} />}
-            onClick={() => {
-              module.keyEvent("v");
-            }}
-            shape="round"
-            size="large"
-            style={{ width: "13rem" }}
-            type="primary"
-          >
-            Show a solution
-          </Button>
-        </Col>
-        <Col flex="14rem">
-          <Button
-            icon={<ImportOutlined />}
-            onClick={() => {
-              message.current?.dispatchEvent(
-                new KeyboardEvent("keydown", { key: "+" }),
-              );
-              setTimeout(() => {
-                if (message.current?.innerHTML) module.keyEvent("l");
-              }, 200);
-            }}
-            shape="round"
-            size="large"
-            style={{ width: "fit-content" }}
-            type="primary"
-          >
-            Load from clipboard
-          </Button>
-        </Col>
-        <Col flex="14rem">
-          <Button
-            icon={<ExportOutlined />}
-            onClick={add}
-            shape="round"
-            size="large"
-            style={{ width: "fit-content" }}
-            type="primary"
-          >
-            Export current puzzle
-          </Button>
-        </Col>
-      </Row>
-      <Row>
-        <Col span={14}>
-          <Card
-            activeTabKey={activeKey}
-            onTabChange={setActiveKey}
-            tabList={tabs.length > 0 ? tabs : undefined}
-            tabProps={
-              tabs.length > 0
-                ? {
-                    type: "editable-card",
-                    hideAdd: true,
-                    size: "small",
-                    onEdit: remove,
-                  }
-                : undefined
-            }
-            title="Exported Puzzles"
-          >
-            {tabs.length === 0 ? (
-              <Empty
-                description={false}
-                image={Empty.PRESENTED_IMAGE_SIMPLE}
-                style={{ height: 20 }}
-              />
-            ) : (
-              <Card.Meta description={tabItems.get(activeKey)} />
-            )}
-          </Card>
-        </Col>
-      </Row>
-    </Space>
+    <HappyProvider>
+      <Space
+        direction="vertical"
+        size="middle"
+        style={{ width: "-webkit-fill-available" }}
+      >
+        <Row wrap={false}>
+          <Col flex="920px">
+            <WASMModule
+              height={450}
+              module={module}
+              ref={message}
+              width={900}
+            />
+          </Col>
+          <Col flex="auto">
+            <Card
+              extra={
+                <Button
+                  disabled={suggestionDisabled}
+                  icon={<BulbOutlined />}
+                  onClick={() => {
+                    module.keyEvent("z");
+                    if (message.current?.innerHTML) {
+                      propose(JSON.parse(message.current.innerHTML) as Data);
+                    }
+                  }}
+                  type="link"
+                >
+                  Generate
+                </Button>
+              }
+              title="Suggestions"
+            >
+              {suggestion ?? <Empty description={false} />}
+            </Card>
+          </Col>
+        </Row>
+        <Row wrap={false}>
+          <Col flex="14rem">
+            <Button
+              icon={
+                isEditorOpen ? <RightCircleOutlined /> : <LeftCircleOutlined />
+              }
+              onClick={() => {
+                module.keyEvent("e");
+                setIsEditorOpen(!isEditorOpen);
+              }}
+              shape="round"
+              size="large"
+              style={{ width: "13rem" }}
+              type="primary"
+            >
+              {`${isEditorOpen ? "Close" : "Open "} editor panel`}
+            </Button>
+          </Col>
+          <Col flex="14rem">
+            <Button
+              icon={<ReloadOutlined rotate={90} />}
+              onClick={() => {
+                module.keyEvent("v");
+              }}
+              shape="round"
+              size="large"
+              style={{ width: "13rem" }}
+              type="primary"
+            >
+              Show a solution
+            </Button>
+          </Col>
+          <Col flex="14rem">
+            <Button
+              icon={<ImportOutlined />}
+              onClick={() => {
+                message.current?.dispatchEvent(
+                  new KeyboardEvent("keydown", { key: "+" }),
+                );
+                setTimeout(() => {
+                  if (message.current?.innerHTML) module.keyEvent("l");
+                }, 200);
+              }}
+              shape="round"
+              size="large"
+              style={{ width: "fit-content" }}
+              type="primary"
+            >
+              Load from clipboard
+            </Button>
+          </Col>
+          <Col flex="14rem">
+            <Button
+              icon={<ExportOutlined />}
+              onClick={add}
+              shape="round"
+              size="large"
+              style={{ width: "fit-content" }}
+              type="primary"
+            >
+              Export current puzzle
+            </Button>
+          </Col>
+        </Row>
+        <Row>
+          <Col span={14}>
+            <Card
+              activeTabKey={activeKey}
+              onTabChange={setActiveKey}
+              tabList={tabs.length > 0 ? tabs : undefined}
+              tabProps={
+                tabs.length > 0
+                  ? {
+                      type: "editable-card",
+                      hideAdd: true,
+                      size: "small",
+                      onEdit: remove,
+                    }
+                  : undefined
+              }
+              title="Exported Puzzles"
+            >
+              {tabs.length === 0 ? (
+                <Empty
+                  description={false}
+                  image={Empty.PRESENTED_IMAGE_SIMPLE}
+                  style={{ height: 20 }}
+                />
+              ) : (
+                <Card.Meta description={tabItems.get(activeKey)} />
+              )}
+            </Card>
+          </Col>
+        </Row>
+      </Space>
+    </HappyProvider>
   );
 }
