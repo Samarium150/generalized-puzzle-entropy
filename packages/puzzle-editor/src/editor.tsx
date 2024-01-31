@@ -1,6 +1,10 @@
 import {
   BulbOutlined,
+  CheckOutlined,
+  CloseOutlined,
   ExportOutlined,
+  EyeInvisibleOutlined,
+  EyeOutlined,
   ImportOutlined,
   LeftCircleOutlined,
   ReloadOutlined,
@@ -9,6 +13,8 @@ import {
 import { Button, Card, Col, Empty, Row, Space, Typography } from "antd";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getModule, ParsedModule, WASMModule } from "./module";
+
+import "./editor.css";
 
 interface Data {
   numBest: number;
@@ -35,6 +41,7 @@ export function Editor(): React.JSX.Element {
   const [module, setModule] = useState(new ParsedModule());
   const [suggestionDisabled, setSuggestionDisabled] = useState(true);
   const [suggestion, setSuggestion] = useState<React.ReactNode>();
+  const [showDetails, setShowDetails] = useState(false);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [tabs, setTabs] = useState<TabTitle[]>([]);
   const [tabItems, setTabItems] = useState(items);
@@ -59,25 +66,42 @@ export function Editor(): React.JSX.Element {
     (data: Data): void => {
       const result = (
         <Space direction="vertical">
+          <Button
+            icon={showDetails ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+            onClick={() => {
+              setShowDetails(!showDetails);
+            }}
+            size="small"
+            type="primary"
+          >
+            {showDetails ? "hide" : "show"} details
+          </Button>
           <Paragraph>
-            <ul>
+            <ul className="list-none-outside">
               {data.numConstraints < 4 ? (
                 <li>
-                  <Text type="danger">Try adding more constraints</Text>
+                  <Text type="danger">
+                    <CloseOutlined style={{ color: "red" }} /> Try adding more
+                    constraints
+                  </Text>
                 </li>
               ) : null}
               {(() => {
                 if (data.numSolution === 0) {
                   return (
                     <li>
-                      <Text type="danger">The puzzle is unsolvable</Text>
+                      <Text type="danger">
+                        <CloseOutlined style={{ color: "red" }} /> The puzzle is
+                        unsolvable
+                      </Text>
                     </li>
                   );
                 } else if (data.numSolution > 10) {
                   return (
                     <li>
                       <Text type="danger">
-                        The puzzle has too many solutions.
+                        <CloseOutlined style={{ color: "red" }} /> The puzzle
+                        has too many solutions.
                       </Text>
                     </li>
                   );
@@ -89,14 +113,20 @@ export function Editor(): React.JSX.Element {
                   return (
                     <li>
                       <Text type="danger">
-                        Player can deduce solutions easily
+                        <CloseOutlined style={{ color: "red" }} /> Player can
+                        deduce solutions easily
+                        {showDetails ? `(Entropy: ${data.entropy})` : null}
                       </Text>
                     </li>
                   );
                 } else if (data.entropy > 8) {
                   return (
                     <li>
-                      <Text type="success">The puzzle is hard to solve</Text>
+                      <Text type="success">
+                        <CheckOutlined style={{ color: "green" }} /> The puzzle
+                        is hard to solve
+                        {showDetails ? `(Entropy: ${data.entropy})` : null}
+                      </Text>
                     </li>
                   );
                 }
@@ -107,7 +137,11 @@ export function Editor(): React.JSX.Element {
                   return (
                     <li>
                       <Text type="danger">
-                        Players can easily notice mistakes
+                        <CloseOutlined style={{ color: "red" }} /> Players can
+                        easily notice mistakes
+                        {showDetails
+                          ? `(Adversarial Entropy: ${data.advEntropy})`
+                          : null}
                       </Text>
                     </li>
                   );
@@ -115,7 +149,11 @@ export function Editor(): React.JSX.Element {
                   return (
                     <li>
                       <Text type="success">
-                        Many paths don&apos;t lead to goal (generally good)
+                        <CheckOutlined style={{ color: "green" }} /> Many paths
+                        don&apos;t lead to goal (generally good)
+                        {showDetails
+                          ? `(Adversarial Entropy: ${data.advEntropy})`
+                          : null}
                       </Text>
                     </li>
                   );
@@ -151,7 +189,7 @@ export function Editor(): React.JSX.Element {
       );
       setSuggestion(result);
     },
-    [module],
+    [module, showDetails],
   );
 
   useEffect(() => {
