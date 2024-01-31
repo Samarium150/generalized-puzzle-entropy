@@ -7,8 +7,8 @@
     "lint": "next lint --fix"
   },
   "dependencies": {
-    "@ant-design/icons": "^5.2.6",
     "@ant-design/happy-work-theme": "^1.0.0",
+    "@ant-design/icons": "^5.3.0",
     "@ant-design/nextjs-registry": "^1.0.0",
     "antd": "^5.13.3",
     "next": "^14.1.0",
@@ -19,8 +19,8 @@
   "devDependencies": {
     "@next/eslint-plugin-next": "^14.1.0",
     "@types/emscripten": "^1.39.10",
-    "@types/node": "^20.11.13",
-    "@types/react": "^18.2.48",
+    "@types/node": "^20.11.16",
+    "@types/react": "^18.2.51",
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.17",
     "eslint-config-custom": "workspace:*",
