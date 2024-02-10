@@ -1,3 +1,7 @@
+if (NOT EMSCRIPTEN)
+    return()
+endif ()
+
 file(GLOB HANDLERS impl/*.cpp)
 
 add_executable(editor editor.cpp ${HANDLERS})

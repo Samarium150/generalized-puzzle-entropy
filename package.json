@@ -18,5 +18,14 @@
     "node": ">=18.17.0",
     "pnpm": ">=8.0.0"
   },
-  "private": true
+  "private": true,
+  "pnpm": {
+    "updateConfig": {
+      "ignoreDependencies": [
+        "long",
+        "bytebuffer",
+        "protobufjs"
+      ]
+    }
+  }
 }

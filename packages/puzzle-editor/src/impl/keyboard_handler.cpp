@@ -1,6 +1,7 @@
-#include "global.h"
+#include "entropy_util.h"
 #include "handler.h"
-#include "solver_util.h"
+#include "infer_util.h"
+#include "solution_util.h"
 
 auto kBest = std::vector<Witness<kPuzzleWidth, kPuzzleHeight>>{};
 auto kCurrentBest = 0u;

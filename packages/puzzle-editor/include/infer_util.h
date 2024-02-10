@@ -3,69 +3,7 @@
 #include <thread>
 
 #include "global.h"
-
-template <int width, int height>
-void DFS(const Witness<width, height>& env, WitnessState<width, height>& state,
-         std::vector<WitnessState<width, height>>& solutions) {
-    if (env.GoalTest(state)) {
-        solutions.push_back(state);
-        return;
-    }
-    auto& actions = *env.actionCache.getItem();
-    env.GetActions(state, actions);
-    for (const auto& action : actions) {
-        env.ApplyAction(state, action);
-        DFS(env, state, solutions);
-        env.UndoAction(state, action);
-    }
-    env.actionCache.returnItem(&actions);
-}
-
-template <int width, int height>
-void GetAllSolutions(const Witness<width, height>& env, WitnessState<width, height>& state,
-                     std::vector<WitnessState<width, height>>& puzzles) {
-    DFS(env, state, puzzles);
-}
-
-template <int width, int height>
-auto GetNumSolutions(const Witness<width, height>& puzzle,
-                     const std::vector<WitnessState<width, height>>& solutions) {
-    return std::accumulate(solutions.begin(), solutions.end(), 0ul,
-                           [&puzzle](const std::size_t& sum, const auto& solution) {
-                               return sum + static_cast<std::size_t>(puzzle.GoalTest(solution));
-                           });
-}
-
-inline auto GetCurrentEntropy(const Witness<kPuzzleWidth, kPuzzleHeight>& env) {
-    kState = kIWS.ws;
-    return kEntropy.SetRelative(true).Calculate(env, kState, 0, std::nullopt);
-}
-
-inline auto GetCurrentAdvEntropy(const Witness<kPuzzleWidth, kPuzzleHeight>& env) {
-    kState = kIWS.ws;
-    return kIWS.ws.path.empty() ? kEntropy.CalculateAdversarialEntropy(env, kState, 0)
-                                : kEntropy.CalculatePartialAdversarialEntropy(env, kState, 0);
-}
-
-inline void UpdateEntropy(const Witness<kPuzzleWidth, kPuzzleHeight>& env) {
-    kEntropyInfo = GetCurrentEntropy(env);
-    kAdvEntropyInfo = GetCurrentAdvEntropy(env);
-}
-
-inline void UpdateSolutionIndices() {
-    kCurrentSolutionIndices.clear();
-    for (auto i = 0; i < kAllSolutions.size(); ++i) {
-        if (kPuzzle.GoalTest(kAllSolutions[i])) kCurrentSolutionIndices.emplace_back(i);
-    }
-    if (kSolved) {
-        if (kCurrentSolutionIndices.empty())
-            kIWS.Reset();
-        else {
-            kSolutionIndex = 0;
-            kIWS.ws = kAllSolutions[kCurrentSolutionIndices[0]];
-        }
-    }
-}
+#include "solution_util.h"
 
 extern std::mutex kInferMutex;
 
@@ -100,8 +38,7 @@ template <int width, int height>
             while (slot < nps) {
                 if (++pc[slot] < pcc)
                     break;
-                else
-                    pc[slot++] = 0;
+                pc[slot++] = 0;
             }
         } while (slot < nps);
 
@@ -113,15 +50,14 @@ template <int width, int height>
         while (slot < rc.size()) {
             if (++rc[slot] < rcc)
                 break;
-            else
-                rc[slot++] = 0;
+            rc[slot++] = 0;
         }
     }
 }
 
 template <int width, int height>
 void Infer(const Witness<width, height>& puzzle) {
-    kBest.emplace_back(kPuzzle);
+    kBest.emplace_back(puzzle);
     kTotalWorkload = 0;
     const auto numRegionSlot = puzzle.GetNumUnknownRegionConstraints();
     puzzle.CountColors();
@@ -170,7 +106,7 @@ void Infer(const Witness<width, height>& puzzle) {
     while (true) {
         unsigned slot;
         while (true) {
-            auto newPuzzle = env;
+            auto newPuzzle = puzzle;
             newPuzzle.RemoveUnknownConstraints(rc, pc, colors);
             auto state = kState;
             if (GetNumSolutions(newPuzzle, kAllSolutions) != 0) {
@@ -182,8 +118,7 @@ void Infer(const Witness<width, height>& puzzle) {
             while (slot < numRegionSlot) {
                 if (++rc[slot] < regionConstraintChoices)
                     break;
-                else
-                    rc[slot++] = 0;
+                rc[slot++] = 0;
             }
             if (slot == numRegionSlot) break;
         }
@@ -192,8 +127,7 @@ void Infer(const Witness<width, height>& puzzle) {
         while (slot < numPathSlot) {
             if (++pc[slot] < pathConstraintChoices)
                 break;
-            else
-                pc[slot++] = 0;
+            pc[slot++] = 0;
         }
         if (slot == numPathSlot) break;
     }

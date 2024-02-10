@@ -1,7 +1,8 @@
 #include <thread>
 
+#include "entropy_util.h"
 #include "handler.h"
-#include "solver_util.h"
+#include "solution_util.h"
 #include "the_witness_inference_rule.h"
 
 auto kPuzzle = Witness<kPuzzleWidth, kPuzzleHeight>{};

@@ -1,7 +1,8 @@
 #include <thread>
 
+#include "entropy_util.h"
 #include "handler.h"
-#include "solver_util.h"
+#include "solution_util.h"
 
 auto kCursor = point3d{0, 0, 0};
 auto kCursorViewport = 0;
@@ -95,7 +96,7 @@ bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/, 
                 if (PointInRect(p, {-0.81, 0.63, 0.07, 0.75}))
                     kShowNumSolutions = !kShowNumSolutions;
                 if (PointInRect(p, {0.42, 0.62, 0.81, 0.75})) {
-                    kPuzzle.Reset();
+                    kPuzzle.Clear();
                     kIWS.Reset();
                     kSolved = false;
                     UpdateSolutionIndices();

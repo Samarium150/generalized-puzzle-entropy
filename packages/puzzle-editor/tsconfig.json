@@ -1,5 +1,17 @@
 {
   "extends": "tsconfig/react-library.json",
-  "include": ["."],
-  "exclude": ["dist", "build", "node_modules"]
+  "compilerOptions": {
+    "allowJs": true
+  },
+  "include": [
+    "index.tsx",
+    "src/**/*.tsx",
+    "test/eval.d.ts"
+  ],
+  "exclude": [
+    "dist",
+    "build",
+    "node_modules",
+    "cmake-build-*/**/*"
+  ]
 }

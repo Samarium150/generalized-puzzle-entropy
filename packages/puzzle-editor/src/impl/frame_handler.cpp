@@ -1,5 +1,6 @@
+#include "global.h"
 #include "handler.h"
-#include "solver_util.h"
+#include "solution_util.h"
 
 auto kRegionConstraintItems = std::vector<RegionConstraintItem>{
     {{kSeparation, 0, Colors::cyan}, point3d{-0.7, -0.52}, 0.1},

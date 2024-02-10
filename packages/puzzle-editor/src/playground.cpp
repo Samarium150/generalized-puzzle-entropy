@@ -1,7 +1,9 @@
 #include <thread>
 
+#include "entropy_util.h"
+#include "global.h"
 #include "handler.h"
-#include "solver_util.h"
+#include "solution_util.h"
 
 auto kAllSolutions = std::vector<WitnessState<kPuzzleWidth, kPuzzleHeight>>{};
 auto kCurrentSolutionIndices = std::vector<std::size_t>{};

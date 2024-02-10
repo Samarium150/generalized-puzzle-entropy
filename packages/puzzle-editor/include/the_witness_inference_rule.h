@@ -183,7 +183,7 @@ ActionType InsideSolutionTreeRule(
 template <int width, int height>
 ActionType RegionCompletionRule(
     const SearchEnvironment<WitnessState<width, height>, WitnessAction>& env,
-    WitnessState<width, height>& state, const WitnessAction& action) {
+    WitnessState<width, height>& state, const WitnessAction& action) __attribute__((optnone)) {
     if (state.path.empty()) return UNKNOWN;
     const auto& witness = static_cast<const Witness<width, height>&>(env);
     witness.ApplyAction(state, action);
