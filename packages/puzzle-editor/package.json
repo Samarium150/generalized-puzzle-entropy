@@ -27,7 +27,7 @@
   "optionalDependencies": {
     "bytebuffer": "5.0.1",
     "long": "3.2.0",
-    "protobufjs": "5.0.3"
+    "protobufjs": "7.2.6"
   },
   "engines": {
     "node": ">=18.17.0",
