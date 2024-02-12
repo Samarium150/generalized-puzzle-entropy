@@ -12,3 +12,7 @@ updates:
       interval: "weekly"
     allow:
       - dependency-type: production
+    ignore:
+      - dependency-name: "bytebuffer"
+      - dependency-name: "long"
+      - dependency-name: "protobufjs"
