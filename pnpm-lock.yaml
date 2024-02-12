@@ -116,8 +116,8 @@ importers:
         specifier: 5.0.1
         version: 5.0.1
       long:
-        specifier: 3.2.0
-        version: 3.2.0
+        specifier: 5.2.3
+        version: 5.2.3
       protobufjs:
         specifier: 5.0.3
         version: 5.0.3
@@ -3063,6 +3063,12 @@ packages:
   /long@3.2.0:
     resolution: {integrity: sha512-ZYvPPOMqUwPoDsbJaR10iQJYnMuZhRTvHYl62ErLIEX7RgFlziSBUUvrt3OVfc47QlHHpzPZYP17g3Fv7oeJkg==}
     engines: {node: '>=0.6'}
+    requiresBuild: true
+    dev: false
+    optional: true
+
+  /long@5.2.3:
+    resolution: {integrity: sha512-lcHwpNoggQTObv5apGNCTdJrO69eHOZMi4BNC+rTLER8iHAqGrUVeLh/irVIM7zTw2bOXA8T6uNPeujwOLg/2Q==}
     requiresBuild: true
     dev: false
     optional: true
