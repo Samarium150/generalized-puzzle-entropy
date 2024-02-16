@@ -16,6 +16,9 @@ auto kSolutionTree = std::vector<SolutionTreeNode>();
 static void Init(const Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
     auto empty = puzzle;
     empty.Clear();
+    kState.Reset();
+    kAllSolutions.clear();
+    kSolutionTree.clear();
     GetAllSolutions(empty, kState, kAllSolutions);
     BuildTree(empty, kAllSolutions, kSolutionTree);
 }
@@ -33,14 +36,15 @@ int main(const int argc, char **argv) {
         std::cerr << "Usage: " << argv[0] << " <input_file>" << std::endl;
         return 1;
     }
-    kEntropy.ruleSet.SetRules(kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
+    kEntropy.SetRelative(true).ruleSet.SetRules(
+        kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
     std::ifstream input(std::string(argv[1]), std::ios::in);
-    std::ofstream output("result.csv", std::ios::out);
+    std::ofstream output("results.csv", std::ios::out);
     if (!input.is_open() || !output.is_open()) {
         std::cerr << "Failed to open file" << std::endl;
         return 1;
     }
-    output << "id,entropy,adv_entropy,up_votes,solves" << std::endl;
+    output << "id,entropy,adv_entropy,up_votes,solves,solutions" << std::endl;
     unsigned i = 0;
     const auto total = count(input) - static_cast<std::size_t>(GetLastLine(input).empty());
     for (std::string line; std::getline(input, line);) {
@@ -55,10 +59,11 @@ int main(const int argc, char **argv) {
         auto puzzle = Witness<4, 4>();
         iss >> puzzle;
         Init(puzzle);
-        auto [entropy, advEntropy] = Calculate(puzzle);
+        const auto [entropy, advEntropy] = Calculate(puzzle);
+        const auto solutions = GetNumSolutions(puzzle, kAllSolutions);
         std::ostringstream oss;
         oss << parts[0] << "," << ((entropy == kInf) ? "inf" : std::to_string(entropy)) << ","
-            << advEntropy << "," << parts[2] << "," << parts[3] << std::endl;
+            << advEntropy << "," << parts[2] << "," << parts[3] << "," << solutions << std::endl;
         output << oss.str();
     }
     input.close();

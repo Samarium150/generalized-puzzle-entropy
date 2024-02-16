@@ -105,7 +105,7 @@ for (let i = 0; i < data.length; ++i) {
   if (!storage) continue;
   if (data[i].upvotes >= 40 || recorded.has(encoded) || !filter(storage))
     continue;
-  recorded.add(encoded);
+  recorded.add(data[i].id);
   appendFileSync(
     fd,
     `${data[i].id}/${JSON.stringify(storage)}/${data[i].upvotes}/${data[i].solves}\n`,

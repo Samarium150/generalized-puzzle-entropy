@@ -21,8 +21,8 @@ void DFS(const Witness<width, height>& env, WitnessState<width, height>& state,
 
 template <int width, int height>
 void GetAllSolutions(const Witness<width, height>& env, WitnessState<width, height>& state,
-                     std::vector<WitnessState<width, height>>& puzzles) {
-    DFS(env, state, puzzles);
+                     std::vector<WitnessState<width, height>>& solutions) {
+    DFS(env, state, solutions);
 }
 
 template <int width, int height>
