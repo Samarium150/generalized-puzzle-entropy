@@ -58,7 +58,11 @@ bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/, 
                     }
                 }
                 if (kPuzzle.GetNumUnknownConstraints() >= kMaxNumUnknowns) kSelectedEditorItem = -1;
+#ifdef __EMSCRIPTEN_PTHREADS__
                 std::thread(UpdateSolutionIndices).detach();
+#else
+                UpdateSolutionIndices();
+#endif
             }
             break;
         case 1:
@@ -100,7 +104,11 @@ bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/, 
                     kIWS.Reset();
                     kSolved = false;
                     UpdateSolutionIndices();
+#ifdef __EMSCRIPTEN_PTHREADS__
                     std::thread(UpdateEntropy, std::ref(kPuzzle)).detach();
+#else
+                    UpdateEntropy(kPuzzle);
+#endif
                 }
             }
             break;

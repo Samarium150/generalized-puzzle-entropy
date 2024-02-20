@@ -17,7 +17,7 @@ auto kSolutionTree = std::vector<SolutionTreeNode>{};
 auto kSolutionIndex = 0u;
 
 static void InitPuzzle() {
-    kEntropy.ruleSet.SetRules(kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
+    kEntropy.SetRelative(true).ruleSet.SetRules(kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
     GetAllSolutions(kPuzzle, kState, kAllSolutions);
     BuildTree(kPuzzle, kAllSolutions, kSolutionTree);
     UpdateSolutionIndices();
@@ -39,7 +39,11 @@ static void InstallHandlers() {
 }
 
 int main(const int argc, char **argv) {
+#ifdef __EMSCRIPTEN_PTHREADS__
     std::thread(InitPuzzle).detach();
+#else
+    InitPuzzle();
+#endif
     InstallHandlers();
     RunHOGGUI(argc, argv, 1280, 640);
     return 0;

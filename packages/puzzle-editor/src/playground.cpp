@@ -1,7 +1,6 @@
 #include <thread>
 
 #include "entropy_util.h"
-#include "global.h"
 #include "handler.h"
 #include "solution_util.h"
 
@@ -45,7 +44,11 @@ void KeyboardHandler(std::size_t /*id*/, tKeyboardModifier /*mod*/, const char k
             auto witness = Witness<kPuzzleWidth, kPuzzleHeight>();
             ss >> witness;
             kPuzzle = witness;
+#ifdef __EMSCRIPTEN_PTHREADS__
             std::thread(UpdateSolutionIndices).detach();
+#else
+            UpdateSolutionIndices();
+#endif
             break;
         }
         case 'r':
@@ -93,7 +96,11 @@ static void InstallHandlers() {
 }
 
 int main(const int argc, char **argv) {
+#ifdef __EMSCRIPTEN_PTHREADS__
     std::thread(InitPuzzle).detach();
+#else
+    InitPuzzle();
+#endif
     InstallHandlers();
     RunHOGGUI(argc, argv, 640, 640);
     return 0;
