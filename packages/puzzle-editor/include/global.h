@@ -1,8 +1,5 @@
 #pragma once
 
-#include "PuzzleEntropy.h"
-#include "Witness.h"
-#include "the_witness_inference_rule.h"
 #include "the_witness_puzzle_entropy.h"
 
 constexpr double kInf = std::numeric_limits<double>::max();
@@ -45,7 +42,6 @@ extern WitnessState<kPuzzleWidth, kPuzzleHeight> kState;
 extern InteractiveWitnessState<kPuzzleWidth, kPuzzleHeight> kIWS;
 extern std::vector<WitnessState<kPuzzleWidth, kPuzzleHeight>> kAllSolutions;
 extern std::vector<std::size_t> kCurrentSolutionIndices;
-extern std::vector<Witness<kPuzzleWidth, kPuzzleHeight>> kBest;
 extern WitnessPuzzleEntropy<kPuzzleWidth, kPuzzleHeight> kEntropy;
 extern EntropyInfo kEntropyInfo;
 extern AdversaryEntropyInfo kAdvEntropyInfo;

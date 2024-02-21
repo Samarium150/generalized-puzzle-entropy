@@ -48,6 +48,11 @@ export function Editor(): React.JSX.Element {
   const [tabItems, setTabItems] = useState(items);
   const [activeKey, setActiveKey] = useState("0");
 
+  const [state, setState] = useState(false);
+  const forceUpdate = useCallback(() => {
+    setState(!state);
+  }, [state]);
+
   useEffect(() => {
     setTimeout(() => {
       setSuggestionDisabled(false);
@@ -170,6 +175,7 @@ export function Editor(): React.JSX.Element {
                 <Button
                   onClick={() => {
                     module.keyEvent("[");
+                    forceUpdate();
                   }}
                   type="primary"
                 >
@@ -178,6 +184,7 @@ export function Editor(): React.JSX.Element {
                 <Button
                   onClick={() => {
                     module.keyEvent("]");
+                    forceUpdate();
                   }}
                   type="primary"
                 >
@@ -190,7 +197,7 @@ export function Editor(): React.JSX.Element {
       );
       setSuggestion(result);
     },
-    [module, showDetails],
+    [forceUpdate, module, showDetails],
   );
 
   useEffect(() => {

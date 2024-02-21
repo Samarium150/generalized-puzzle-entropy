@@ -2,10 +2,12 @@
 
 #include <thread>
 
-#include "global.h"
+#include "entropy_util.h"
 #include "solution_util.h"
 
 extern std::mutex kInferMutex;
+extern std::unordered_map<std::string, double> kInferRecord;
+extern std::vector<Witness<kPuzzleWidth, kPuzzleHeight>> kBest;
 
 template <int width, int height>
 [[maybe_unused]] void InferHelper(const Witness<width, height>& puzzle, const unsigned start,
@@ -25,8 +27,9 @@ template <int width, int height>
         do {
             auto newPuzzle = puzzle;
             newPuzzle.RemoveUnknownConstraints(rc, pc, colors);
-            if (GetNumSolutions(newPuzzle, kAllSolutions) != 0) {
+            if (const auto value = GetNumSolutions(newPuzzle, kAllSolutions); value != 0) {
                 kInferMutex.lock();
+                kInferRecord[newPuzzle.SaveToHashString()] = value;
                 kBest.push_back(newPuzzle);
                 kInferMutex.unlock();
             }
@@ -36,8 +39,7 @@ template <int width, int height>
             slot = 0;
             // Increment combination of the second set
             while (slot < nps) {
-                if (++pc[slot] < pcc)
-                    break;
+                if (++pc[slot] < pcc) break;
                 pc[slot++] = 0;
             }
         } while (slot < nps);
@@ -48,8 +50,7 @@ template <int width, int height>
         // Increment combination of the first set
         slot = 0;
         while (slot < rc.size()) {
-            if (++rc[slot] < rcc)
-                break;
+            if (++rc[slot] < rcc) break;
             rc[slot++] = 0;
         }
     }
@@ -95,11 +96,6 @@ void Infer(const Witness<width, height>& puzzle) {
                              pathConstraintChoices, std::ref(colors));
     }
     std::for_each(threads.begin(), threads.end(), [](auto& t) { t.join(); });
-    std::thread([]() {
-        std::sort(kBest.begin() + 1, kBest.end(), [](const auto& a, const auto& b) {
-            return GetNumSolutions(a, kAllSolutions) < GetNumSolutions(b, kAllSolutions);
-        });
-    }).detach();
 #else
     auto rc = std::vector<unsigned>(numRegionSlot);
     auto pc = std::vector<unsigned>(numPathSlot);
@@ -109,15 +105,15 @@ void Infer(const Witness<width, height>& puzzle) {
             auto newPuzzle = puzzle;
             newPuzzle.RemoveUnknownConstraints(rc, pc, colors);
             auto state = kState;
-            if (GetNumSolutions(newPuzzle, kAllSolutions) != 0) {
+            if (const auto value = GetNumSolutions(newPuzzle, kAllSolutions); value != 0) {
+                kInferRecord[newPuzzle.SaveToHashString()] = value;
                 kBest.push_back(newPuzzle);
             }
             kCounter++;
 
             slot = 0;
             while (slot < numRegionSlot) {
-                if (++rc[slot] < regionConstraintChoices)
-                    break;
+                if (++rc[slot] < regionConstraintChoices) break;
                 rc[slot++] = 0;
             }
             if (slot == numRegionSlot) break;
@@ -125,15 +121,15 @@ void Infer(const Witness<width, height>& puzzle) {
         std::fill(begin(rc), end(rc), 0);
         slot = 0;
         while (slot < numPathSlot) {
-            if (++pc[slot] < pathConstraintChoices)
-                break;
+            if (++pc[slot] < pathConstraintChoices) break;
             pc[slot++] = 0;
         }
         if (slot == numPathSlot) break;
     }
-    std::sort(kBest.begin() + 1, kBest.end(), [](auto& a, auto& b) {
-        return GetNumSolutions(a, kAllSolutions) < GetNumSolutions(b, kAllSolutions);
-    });
 #endif
+    std::sort(kBest.begin(), kBest.end(), [](const auto& a, const auto& b) {
+        return kInferRecord[a.SaveToHashString()] < kInferRecord[b.SaveToHashString()];
+    });
+    kInferRecord.clear();
     kTotalWorkload = 0;
 }

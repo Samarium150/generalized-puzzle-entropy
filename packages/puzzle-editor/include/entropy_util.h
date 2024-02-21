@@ -4,7 +4,7 @@
 
 inline auto GetCurrentEntropy(const Witness<kPuzzleWidth, kPuzzleHeight>& env) {
     kState = kIWS.ws;
-    return kEntropy.SetRelative(true).Calculate(env, kState, 0, std::nullopt);
+    return kEntropy.Calculate(env, kState, 0, std::nullopt);
 }
 
 inline auto GetCurrentAdvEntropy(const Witness<kPuzzleWidth, kPuzzleHeight>& env) {

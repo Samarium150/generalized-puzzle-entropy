@@ -67,12 +67,13 @@ bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/, 
             break;
         case 1:
             if (event == kMouseDown && viewport == kCursorViewport) {
+                kEditor.UpdateUnknownConstraints();
                 auto constraintSelected = false;
                 for (auto i = 0; i < kRegionConstraintItems.size(); ++i) {
                     if (const auto &[constraint, c, radius] = kRegionConstraintItems[i];
                         PointInRect(p, {c, radius})) {
                         if (constraint.type != kUnknownRegionConstraint ||
-                            kEditor.constraintCount[kUnknownRegionConstraint] < 4) {
+                            kEditor.GetNumUnknownRegionConstraints() < kMaxNumUnknowns) {
                             kSelectedEditorItem = i;
                             constraintSelected = true;
                         }
@@ -82,8 +83,12 @@ bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/, 
                 for (auto i = 0; i < kPathConstraintItems.size(); ++i) {
                     if (const auto &[constraint, c, radius] = kPathConstraintItems[i];
                         PointInRect(p, {c, radius})) {
-                        kSelectedEditorItem = i + static_cast<int>(kRegionConstraintItems.size());
-                        constraintSelected = true;
+                        if (constraint != kUnknownPathConstraint ||
+                            kEditor.GetNumUnknownPathConstraints() < kMaxNumUnknowns) {
+                            kSelectedEditorItem =
+                                i + static_cast<int>(kRegionConstraintItems.size());
+                            constraintSelected = true;
+                        }
                         break;
                     }
                 }

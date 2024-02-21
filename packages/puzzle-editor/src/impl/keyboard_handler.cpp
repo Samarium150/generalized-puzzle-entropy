@@ -1,8 +1,7 @@
-#include "entropy_util.h"
 #include "handler.h"
 #include "infer_util.h"
-#include "solution_util.h"
 
+auto kInferRecord = std::unordered_map<std::string, double>{};
 auto kBest = std::vector<Witness<kPuzzleWidth, kPuzzleHeight>>{};
 auto kCurrentBest = 0u;
 auto kInferMutex = std::mutex();
@@ -28,9 +27,7 @@ static void ProvideSuggestion() {
 
 static void Calculate() {
     kBest.clear();
-    if (kPuzzle.GetNumUnknownPathConstraints() != 0) {
-        Infer(kPuzzle);
-    }
+    if (kPuzzle.GetNumUnknownConstraints() != 0) Infer(kPuzzle);
     UpdateEntropy(kPuzzle);
     ProvideSuggestion();
 }
