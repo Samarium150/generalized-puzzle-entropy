@@ -21,6 +21,8 @@ const __dirname = dirname(__filename);
 const STORAGE = loadProtoFile(resolve(__dirname, "data/grid.proto")).build(
   "GridProto.Storage",
 );
+const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
+const DECAY_RATE = 0;
 
 if (process.argv.length <= 2) {
   // eslint-disable-next-line no-console -- node script
@@ -61,7 +63,7 @@ function filter(storage) {
   storage.entity.forEach((e) => {
     if (e.count !== 0) {
       for (let i = 0; i < e.count; i++) {
-        expanded.push({ ...e, count: 0 });
+        expanded.push({...e, count: 0});
       }
     } else {
       expanded.push(e);
@@ -83,12 +85,9 @@ try {
   console.error(e);
   process.exit(1);
 }
-const dist = resolve(
-  __dirname,
-  "data/",
-  process.argv[2].replace(".json", ".txt"),
-);
-if (existsSync(dist)) rmSync(dist, { force: true });
+const date = process.argv[2].replace(".json", "");
+const dist = resolve(__dirname, "data/", `${date}.txt`,);
+if (existsSync(dist)) rmSync(dist, {force: true});
 const fd = openSync(dist, "a+");
 /** @type Set<string> */
 const recorded = new Set();
@@ -105,11 +104,13 @@ for (let i = 0; i < data.length; ++i) {
   if (!storage) continue;
   if (data[i].upvotes >= 40 || recorded.has(encoded) || !filter(storage))
     continue;
-  recorded.add(data[i].id);
+  const age = new Date(`${date}T00:00:00Z`) - new Date(data[i].createUtc);
+  const decayed = Math.round(data[i].upvotes / Math.pow(1 + DECAY_RATE, age / MILLISECONDS_PER_DAY * 12 / 365));
   appendFileSync(
     fd,
-    `${data[i].id}/${JSON.stringify(storage)}/${data[i].upvotes}/${data[i].solves}\n`,
+    `${data[i].id}/${JSON.stringify(storage)}/${decayed}/${data[i].solves}\n`,
     "utf8",
   );
+  recorded.add(data[i].id);
 }
 closeSync(fd);
