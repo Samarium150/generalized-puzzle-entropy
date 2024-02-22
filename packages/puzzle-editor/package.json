@@ -4,10 +4,11 @@
   "main": "./index.tsx",
   "types": "./index.tsx",
   "scripts": {
-    "build": "node run.mjs build",
+    "build": "node scripts/run.mjs build",
     "lint": "eslint src --fix",
     "pre-dev": "pnpm run build",
-    "test": "node run.mjs test"
+    "prepare": "node scripts/run.mjs prepare",
+    "test": "node scripts/run.mjs test"
   },
   "dependencies": {
     "@ant-design/happy-work-theme": "^1.0.0",

@@ -12,6 +12,7 @@
       <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/dist" />
       <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk" />
       <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/hog2" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/.venv" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

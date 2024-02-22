@@ -1,12 +1,17 @@
-import {existsSync} from "node:fs";
-import {platform} from "node:os";
-import {spawn} from "node:child_process";
+"use strict";
+import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
+import { platform } from "node:os";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 
 if (process.argv.length <= 2) {
   // eslint-disable-next-line no-console -- node script
   console.error("Usage: node run.mjs <task>");
   process.exit(1);
 }
+
+process.chdir(dirname(fileURLToPath(import.meta.url)));
 
 function run(task) {
   let file;

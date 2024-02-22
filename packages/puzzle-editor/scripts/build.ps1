@@ -1,9 +1,5 @@
 $ErrorActionPreference = "Stop"
 Set-Location -Path "$(git rev-parse --show-toplevel)\packages\puzzle-editor"
-Set-Location -Path "lib\emsdk"
-.\emsdk.ps1 install latest
-.\emsdk.ps1 activate latest
-Set-Location -Path "..\.."
 New-Item -Path "dist" -ItemType Directory
 cmake -S . -B dist `
   --fresh `

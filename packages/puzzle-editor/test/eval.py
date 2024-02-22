@@ -3,11 +3,11 @@
 import csv
 import json
 import numpy as np
-from datetime import datetime, timezone
+from datetime import datetime, timezone, UTC
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 from scipy.stats import pearsonr
-from typing import Dict, List
+from typing import Dict, List, Tuple
 
 D0 = "2020-02-27"
 D1 = "2024-02-20"
@@ -26,7 +26,7 @@ def normalize() -> float:
         for data in old:
             # noinspection SpellCheckingInspection
             record[data.get("id")] = (data.get("upvotes"),
-                                      (d0 - datetime.utcfromtimestamp(data.get("createUtc") // 1000).astimezone()).days)
+                                      (d0 - datetime.fromtimestamp(data.get("createUtc") // 1000, UTC)).days)
     with open(f"data/{D1}.json", "r") as f:
         new = json.load(f)
         for data in new:
@@ -36,7 +36,7 @@ def normalize() -> float:
                 old_ages.append(record.get(data.get("id"))[1])
                 # noinspection SpellCheckingInspection
                 new_up_votes.append(data.get("upvotes"))
-                new_ages.append((d1 - datetime.utcfromtimestamp(data.get("createUtc") // 1000).astimezone()).days)
+                new_ages.append((d1 - datetime.fromtimestamp(data.get("createUtc") // 1000, UTC)).days)
 
     old_up_votes = np.array(old_up_votes, dtype=np.int16)
     new_up_votes = np.array(new_up_votes, dtype=np.int16)
@@ -55,12 +55,23 @@ def normalize() -> float:
 def ranking():
     with open(f"data/{D1}.json") as f:
         data = json.load(f)
-    d: Dict[str, int] = dict()
+    records: Dict[str, List[int]] = dict()
     for record in data:
-        name = record.get("creatorName")
+        name: str = record.get("creatorName")
         # noinspection SpellCheckingInspection
-        d[name] = d.setdefault(name, 0) + int(record.get("upvotes"))
-    print(sorted(d.items(), key=lambda x: x[1], reverse=True))
+        records.setdefault(name, []).append(int(record.get("upvotes")))
+    d: Dict[str, Tuple[int, float]] = dict()
+    for k, v in records.items():
+        s = sum(v)
+        avg = s / len(v)
+        d[k] = (s, avg)
+    with open("data/leaderboard.csv", "w") as f:
+        writer = csv.DictWriter(f, fieldnames=["name", "total_up_votes", "average_up_votes"])
+        writer.writeheader()
+        writer.writerows(
+            [{"name": k, "total_up_votes": v[0], "average_up_votes": v[1]} for k, v in
+             sorted(d.items(), key=lambda item: item[1][0], reverse=True)]
+        )
 
 
 def plot():

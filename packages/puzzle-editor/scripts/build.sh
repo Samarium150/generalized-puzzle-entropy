@@ -1,9 +1,5 @@
 set -e
 cd "$(git rev-parse --show-toplevel)/packages/puzzle-editor"
-cd lib/emsdk
-./emsdk install latest
-./emsdk activate latest
-cd ../../
 mkdir -p dist
 cmake -S . -B dist \
   --fresh \
