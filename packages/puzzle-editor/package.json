@@ -1,11 +1,11 @@
 {
-  "name": "puzzle-editor",
+  "name": "@repo/puzzle-editor",
   "license": "GPL-3.0",
   "main": "./index.tsx",
   "types": "./index.tsx",
   "scripts": {
     "build": "node scripts/run.mjs build",
-    "lint": "eslint src --fix",
+    "lint": "eslint . --fix",
     "pre-dev": "pnpm run build",
     "prepare": "node scripts/run.mjs prepare",
     "test": "node scripts/run.mjs test"
@@ -13,19 +13,21 @@
   "dependencies": {
     "@ant-design/happy-work-theme": "^1.0.0",
     "@ant-design/icons": "^5.3.0",
-    "antd": "^5.14.1",
+    "antd": "^5.14.2",
     "react": "^18.2.0"
   },
   "devDependencies": {
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@types/emscripten": "^1.39.10",
-    "@types/node": "^20.11.19",
-    "@types/react": "^18.2.57",
+    "@types/eslint": "^8.56.3",
+    "@types/node": "^20.11.20",
+    "@types/react": "^18.2.58",
     "@types/react-dom": "^18.2.19",
     "bytebuffer": "5.0.1",
-    "eslint-config-custom": "workspace:*",
+    "eslint": "^8.57.0",
     "long": "3.2.0",
     "protobufjs": "5.0.3",
-    "tsconfig": "workspace:*",
     "typescript": "^5.3.3"
   }
 }

@@ -43,10 +43,8 @@ export class ParsedModule {
 }
 
 export async function getModule(name: string): Promise<ParsedModule> {
-  /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- load WASM */
   if (typeof (window as any)[name] !== "undefined") {
     const factory = (window as any)[name] as typeof ModuleFactory;
-    /* eslint-enable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-member-access -- load WASM */
     return factory().then(ParsedModule.from);
   }
   return Promise.reject(new Error("WASM module not found"));
@@ -59,7 +57,7 @@ interface ModuleProps {
 }
 
 function getHTMLClientRect(): DOMRect {
-  return document.getElementsByTagName("html")[0].getBoundingClientRect();
+  return document.getElementsByTagName("html")[0]!.getBoundingClientRect();
 }
 
 export const WASMModule = memo(

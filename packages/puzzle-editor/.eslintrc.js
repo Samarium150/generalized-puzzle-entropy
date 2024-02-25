@@ -1,12 +1,19 @@
+/** @type {import("eslint").Linter.Config} */
 module.exports = {
-  extends: ["custom/react-internal", "plugin:prettier/recommended"],
-  overrides: [
-    {
-      files: ["src/**/*.{ts,tsx,js,jsx}"],
-      rules: {
-        "prettier/prettier": ["error", { endOfLine: "auto" }],
-      },
-    },
-  ],
-  ignorePatterns: ["**/lib/**/*", "**/cmake-*/**/*"],
+  root: true,
+  extends: ["@repo/eslint-config/react-internal.js"],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: true,
+  },
+  env: {
+    browser: true,
+    node: true,
+  },
+  ignorePatterns: ["cmake-build-*", "lib"],
+  rules: {
+    "no-undef": "off",
+    "no-unused-vars": "off",
+    "turbo/no-undeclared-env-vars": "off",
+  },
 };

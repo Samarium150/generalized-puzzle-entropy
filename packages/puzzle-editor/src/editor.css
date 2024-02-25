@@ -1,7 +1,7 @@
 .list-none-outside {
   list-style: none outside !important;
-  > li {
-    margin-left: 0 !important;
-    padding-left: 0 !important;
-  }
+}
+.list-none-outside > li {
+  margin-left: 0 !important;
+  padding-left: 0 !important;
 }

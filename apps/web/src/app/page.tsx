@@ -4,7 +4,7 @@ import { HappyProvider } from "@ant-design/happy-work-theme";
 import { Flex, Layout, Menu, type MenuProps, Switch, Typography } from "antd";
 import Link from "next/link";
 import Script from "next/script";
-import { Editor } from "puzzle-editor";
+import { Editor } from "@repo/puzzle-editor";
 import { type JSX, useState } from "react";
 
 // noinspection SpellCheckingInspection

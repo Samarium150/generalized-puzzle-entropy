@@ -1,16 +1,9 @@
+/** @type {import("eslint").Linter.Config} */
 module.exports = {
-  extends: [
-    "custom/next",
-    "plugin:@next/next/core-web-vitals",
-    "plugin:prettier/recommended",
-    "plugin:tailwindcss/recommended",
-  ],
-  overrides: [
-    {
-      files: ["src/app/**/*.{ts,tsx}"],
-      rules: {
-        "prettier/prettier": ["error", { endOfLine: "auto" }],
-      },
-    },
-  ],
+  root: true,
+  extends: ["@repo/eslint-config/next.js", "plugin:tailwindcss/recommended"],
+  parser: "@typescript-eslint/parser",
+  parserOptions: {
+    project: true,
+  },
 };

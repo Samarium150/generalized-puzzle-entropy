@@ -260,7 +260,7 @@ export function Editor(): React.JSX.Element {
       setActiveKey("-1");
       items.clear();
     } else if (targetKey === activeKey) {
-      const { key } = newTabs[index === newTabs.length ? index - 1 : index];
+      const { key } = newTabs[index === newTabs.length ? index - 1 : index]!;
       setActiveKey(key);
       items.delete(targetKey);
     }

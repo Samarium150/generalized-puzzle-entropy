@@ -2,7 +2,7 @@
 import { EditOutlined, PlayCircleOutlined } from "@ant-design/icons";
 import { Layout, Menu, type MenuProps, Typography } from "antd";
 import Script from "next/script";
-import { Playground } from "puzzle-editor";
+import { Playground } from "@repo/puzzle-editor";
 import { type JSX, useState } from "react";
 
 // noinspection SpellCheckingInspection
