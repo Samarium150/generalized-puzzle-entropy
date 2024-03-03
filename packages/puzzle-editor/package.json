@@ -12,17 +12,17 @@
   },
   "dependencies": {
     "@ant-design/happy-work-theme": "^1.0.0",
-    "@ant-design/icons": "^5.3.0",
-    "antd": "^5.14.2",
+    "@ant-design/icons": "^5.3.1",
+    "antd": "^5.15.0",
     "react": "^18.2.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/emscripten": "^1.39.10",
-    "@types/eslint": "^8.56.3",
-    "@types/node": "^20.11.20",
-    "@types/react": "^18.2.58",
+    "@types/eslint": "^8.56.5",
+    "@types/node": "^20.11.24",
+    "@types/react": "^18.2.61",
     "@types/react-dom": "^18.2.19",
     "bytebuffer": "5.0.1",
     "eslint": "^8.57.0",
