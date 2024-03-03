@@ -1,5 +1,5 @@
 $ErrorActionPreference = "Stop"
-$data = "2022-11-29"
+$data = "filtered"
 Set-Location -Path "$(git rev-parse --show-toplevel)\packages\puzzle-editor"
 New-Item -Path "dist\data" -ItemType Directory
 cmake -S . -B dist `

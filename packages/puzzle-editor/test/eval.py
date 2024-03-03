@@ -2,58 +2,20 @@
 # -*- coding: utf-8 -*-
 import csv
 import json
-import numpy as np
-from datetime import datetime, timezone, UTC
-import matplotlib.pyplot as plt
-from scipy.optimize import minimize
-from scipy.stats import pearsonr
 from typing import Dict, List, Tuple
 
-D0 = "2020-02-27"
-D1 = "2024-02-20"
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy.stats import linregress
 
-
-def normalize() -> float:
-    d0 = datetime.fromisoformat(D0).astimezone(timezone.utc)
-    d1 = datetime.fromisoformat(D1).astimezone(timezone.utc)
-    record = dict()
-    old_up_votes = []
-    new_up_votes = []
-    old_ages = []
-    new_ages = []
-    with open(f"data/{D0}.json", "r") as f:
-        old = json.load(f)
-        for data in old:
-            # noinspection SpellCheckingInspection
-            record[data.get("id")] = (data.get("upvotes"),
-                                      (d0 - datetime.fromtimestamp(data.get("createUtc") // 1000, UTC)).days)
-    with open(f"data/{D1}.json", "r") as f:
-        new = json.load(f)
-        for data in new:
-            pid = data.get("id")
-            if pid in record:
-                old_up_votes.append(record.get(data.get("id"))[0])
-                old_ages.append(record.get(data.get("id"))[1])
-                # noinspection SpellCheckingInspection
-                new_up_votes.append(data.get("upvotes"))
-                new_ages.append((d1 - datetime.fromtimestamp(data.get("createUtc") // 1000, UTC)).days)
-
-    old_up_votes = np.array(old_up_votes, dtype=np.int16)
-    new_up_votes = np.array(new_up_votes, dtype=np.int16)
-    old_ages = np.array(old_ages, dtype=np.float64) / 7
-    new_ages = np.array(new_ages, dtype=np.float64) / 7
-
-    def loss(r):
-        predicted = old_up_votes * (1 + r[0]) ** (new_ages - old_ages)
-        error = new_up_votes - predicted
-        return np.sum(error ** 2)
-
-    result = minimize(loss, np.array([0.001]), bounds=[(0, None)])
-    return result.x[0]
+DATE = "2024-02-20"
+# retrieved from https://ideaowl.com/remuse
+INTERCEPT = np.float64(67.33339206338432)
+SLOPE = np.float64(-3.987906486478669e-11)
 
 
 def ranking():
-    with open(f"data/{D1}.json") as f:
+    with open(f"data/{DATE}.json") as f:
         data = json.load(f)
     records: Dict[str, List[int]] = dict()
     for record in data:
@@ -74,30 +36,46 @@ def ranking():
         )
 
 
+def normalize(up_votes: np.int32, timestamp: np.int64) -> np.float64:
+    return np.float64(up_votes - (SLOPE * timestamp + INTERCEPT))
+
+
 def plot():
-    x_1: List[float] = []
-    x_2: List[float] = []
-    y: List[float] = []
+    x1 = np.array([], dtype=np.float64)
+    x2 = np.array([], dtype=np.float64)
+    y = np.array([], dtype=np.float64)
     with open("results.csv", "r") as f:
         reader = csv.DictReader(f)
         row: Dict[str, str]
         for row in reader:
             if row["entropy"] == "inf":
                 continue
-            x_1.append(float(row["entropy"]))
-            x_2.append(float(row["adv_entropy"]))
-            y.append(float(row["up_votes"]))
-    plt.scatter(x_1, y)
-    plt.text(max(x_1) - 1.5, max(y) - 1, "r = {:.2f}".format(pearsonr(x_1, y)[0]))
+            entropy = np.float64(row["entropy"])
+            adv_entropy = np.float64(row["adv_entropy"])
+            upvote = np.int32(row["upvote"])
+            timestamp = np.int64(row["timestamp"])
+            x1 = np.append(x1, entropy)
+            x2 = np.append(x2, adv_entropy)
+            y = np.append(y, normalize(upvote, timestamp))
+
+    result = linregress(x1, y)
+    print(result)
+    plt.scatter(x1, y)
+    plt.plot(x1, result.slope * x1 + result.intercept)
+    plt.text(np.max(x1) - 1.5, np.max(y) - 1, "r = {:.3f}".format(result.rvalue))
     plt.xlabel("Entropy")
-    plt.ylabel("Up Votes")
-    plt.savefig("entropy_vs_up_votes.png")
+    plt.ylabel("Upvote")
+    plt.savefig("entropy_vs_upvote.png")
     plt.clf()
-    plt.scatter(x_2, y)
-    plt.text(max(x_2) - 1.5, max(y) - 1, "r = {:.2f}".format(pearsonr(x_2, y)[0]))
+
+    result = linregress(x2, y)
+    print(result)
+    plt.scatter(x2, y)
+    plt.plot(x2, result.slope * x2 + result.intercept)
+    plt.text(np.max(x2) - 1.5, np.max(y) - 1, "r = {:.3f}".format(result.rvalue))
     plt.xlabel("Adv Entropy")
-    plt.ylabel("Up Votes")
-    plt.savefig("adv_entropy_vs_up_votes.png")
+    plt.ylabel("Upvote")
+    plt.savefig("adv_entropy_vs_upvote.png")
 
 
 if __name__ == '__main__':

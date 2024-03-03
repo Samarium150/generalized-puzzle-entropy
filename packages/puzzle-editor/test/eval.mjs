@@ -21,8 +21,6 @@ const __dirname = dirname(__filename);
 const STORAGE = loadProtoFile(resolve(__dirname, "data/grid.proto")).build(
   "GridProto.Storage",
 );
-const MILLISECONDS_PER_DAY = 24 * 60 * 60 * 1000;
-const DECAY_RATE = 0;
 
 if (process.argv.length <= 2) {
   // eslint-disable-next-line no-console -- node script
@@ -104,11 +102,9 @@ for (let i = 0; i < data.length; ++i) {
   if (!storage) continue;
   if (data[i].upvotes >= 40 || recorded.has(encoded) || !filter(storage))
     continue;
-  const age = new Date(`${date}T00:00:00Z`) - new Date(data[i].createUtc);
-  const decayed = Math.round(data[i].upvotes / Math.pow(1 + DECAY_RATE, age / MILLISECONDS_PER_DAY * 12 / 365));
   appendFileSync(
     fd,
-    `${data[i].id}/${JSON.stringify(storage)}/${decayed}/${data[i].solves}\n`,
+    `${data[i].id}/${data[i].createUtc}/${data[i].upvotes}/${JSON.stringify(storage)}\n`,
     "utf8",
   );
   recorded.add(data[i].id);

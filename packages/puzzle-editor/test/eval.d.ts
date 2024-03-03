@@ -1,7 +1,3 @@
-interface Measure {
-  minSolKLDivergenceEntropyWithPruningAndN0: number;
-}
-
 // noinspection SpellCheckingInspection
 interface Data {
   id: string;
@@ -15,7 +11,6 @@ interface Data {
   creatorName: string;
   createUtc: number;
   voted: number;
-  measureValsByName: Measure;
 }
 
 interface Shape {

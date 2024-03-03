@@ -1,5 +1,5 @@
 set -e
-data="2022-11-29"
+data="filtered"
 cd "$(git rev-parse --show-toplevel)/packages/puzzle-editor"
 mkdir -p dist/data
 cmake -S . -B dist \

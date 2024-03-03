@@ -13,7 +13,10 @@ static auto kEntropy = WitnessPuzzleEntropy<kPuzzleWidth, kPuzzleHeight>{};
 static auto kAllSolutions = std::vector<WitnessState<kPuzzleWidth, kPuzzleHeight>>{};
 auto kSolutionTree = std::vector<SolutionTreeNode>();
 
-static void Init(const Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
+static void Init(Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
+    if (const auto [x, y] = puzzle.goal[0]; x < 0 && y == kPuzzleHeight) {
+        puzzle.SetGoal(0, kPuzzleHeight + 1);
+    }
     auto empty = puzzle;
     empty.Clear();
     kState.Reset();
@@ -44,7 +47,7 @@ int main(const int argc, char **argv) {
         std::cerr << "Failed to open file" << std::endl;
         return 1;
     }
-    output << "id,entropy,adv_entropy,up_votes,solves,solutions" << std::endl;
+    output << "id,timestamp,upvote,entropy,adv_entropy,solutions" << std::endl;
     unsigned i = 0;
     const auto total = count(input) - static_cast<std::size_t>(GetLastLine(input).empty());
     for (std::string line; std::getline(input, line);) {
@@ -55,15 +58,16 @@ int main(const int argc, char **argv) {
             return 1;
         }
         std::cout << "processing: " << ++i << "/" << total << std::endl;
-        std::istringstream iss(parts[1]);
+        std::istringstream iss(parts[3]);
         auto puzzle = Witness<4, 4>();
         iss >> puzzle;
         Init(puzzle);
         const auto [entropy, advEntropy] = Calculate(puzzle);
         const auto solutions = GetNumSolutions(puzzle, kAllSolutions);
         std::ostringstream oss;
-        oss << parts[0] << "," << ((entropy == kInf) ? "inf" : std::to_string(entropy)) << ","
-            << advEntropy << "," << parts[2] << "," << parts[3] << "," << solutions << std::endl;
+        oss << parts[0] << "," << parts[1] << "," << parts[2] << ","
+            << ((entropy == kInf) ? "inf" : std::to_string(entropy)) << "," << advEntropy << ","
+            << solutions << std::endl;
         output << oss.str();
     }
     input.close();
