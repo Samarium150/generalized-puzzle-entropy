@@ -18,8 +18,8 @@ installed and available in the system path of your machine:
   - Python >= 3.8.0
 
 Project configurations for Jetbrains IDEs, like CLion and WebStorm,
-are provided in the `.idea` directory.
-This repository and the `packages/puzzle-editor` subdirectory
+are provided in the [`.idea`](/.idea) directory.
+This repository and the [`packages/puzzle-editor`](/packages/puzzle-editor) subdirectory
 can be opened as projects in these IDEs.
 
 ### Installation
@@ -44,16 +44,16 @@ pnpm run test
 
 ### Frontend
 
-- [Next.js]("https://nextjs.org")
-- [React]("https://react.dev/")
-- [Turborepo]("https://turbo.build/repo")
+- [Next.js](https://nextjs.org)
+- [React](https://react.dev/)
+- [Turborepo](https://turbo.build/repo)
 
 ### Backend
 
-- [CMake]("https://cmake.org")
-- [Emscripten]("https://emscripten.org")
-- [LLVM]("https://llvm.org")
-- [Ninja]("https://ninja-build.org")
+- [CMake](https://cmake.org)
+- [Emscripten](https://emscripten.org)
+- [LLVM](https://llvm.org)
+- [Ninja](https://ninja-build.org)
 
 ## License
 
