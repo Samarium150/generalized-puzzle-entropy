@@ -19,7 +19,7 @@ function run(task) {
     case "win32":
       file = `${task}.ps1`;
       if (existsSync(file))
-        return spawn("powershell", [`${task}.ps1`], {stdio: "inherit"});
+        return spawn("powershell", [`.\\${task}.ps1`], {stdio: "inherit"});
       break;
     case "linux":
       file = `${task}.sh`;

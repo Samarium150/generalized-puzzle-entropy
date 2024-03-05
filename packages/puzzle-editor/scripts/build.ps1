@@ -1,6 +1,6 @@
 $ErrorActionPreference = "Stop"
 Set-Location -Path "$(git rev-parse --show-toplevel)\packages\puzzle-editor"
-New-Item -Path "dist" -ItemType Directory
+New-Item -Path "dist" -ItemType Directory -ErrorAction Ignore
 cmake -S . -B dist `
   --fresh `
   --preset=emscripten
