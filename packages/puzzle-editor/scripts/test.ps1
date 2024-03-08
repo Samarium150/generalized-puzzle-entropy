@@ -1,16 +1,13 @@
 $ErrorActionPreference = "Stop"
-$data = "filtered"
+$data = "2022-11-29"
 Set-Location -Path "$(git rev-parse --show-toplevel)\packages\puzzle-editor"
-New-Item -Path "dist\data" -ItemType Directory
-cmake -S . -B dist `
-  --fresh `
-  --preset=clang
-cmake --build dist --clean-first
+cmake --fresh --preset=clang
+cmake --build --preset=test
 node "test\eval.mjs" "$data.json"
-Move-Item "test\data\$data.txt" -Destination "dist\test"
-Copy-Item "test\eval.py" -Destination "dist\test"
-Copy-Item "test\data\*.json" -Destination "dist\test\date"
-Set-Location -Path "dist\test"
-.\eval.exe "$data.txt"
-..\..\.venv\Scripts\python -m pip install -r requirements.txt
+New-Item -Path "cmake-build-clang\test\data" -ItemType Directory -ErrorAction Ignore
+Move-Item "test\data\$data.txt" -Destination "cmake-build-clang\test" -Force
+Copy-Item "test\eval.py" -Destination "cmake-build-clang\test" -Force
+Copy-Item "test\data\*.json" -Destination "cmake-build-clang\test\data" -Force
+Set-Location -Path "cmake-build-clang\test"
+.\eval "$data.txt"
 ..\..\.venv\Scripts\python eval.py
