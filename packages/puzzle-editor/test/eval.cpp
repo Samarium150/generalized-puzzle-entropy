@@ -14,8 +14,11 @@ static auto kAllSolutions = std::vector<WitnessState<kPuzzleWidth, kPuzzleHeight
 auto kSolutionTree = std::vector<SolutionTreeNode>();
 
 static void Init(Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
-    if (const auto [x, y] = puzzle.goal[0]; x < 0 && y == kPuzzleHeight) {
-        puzzle.SetGoal(0, kPuzzleHeight + 1);
+    if (const auto [x, y] = puzzle.goal[0]; x < 0) {
+        if (y == 0)
+            puzzle.SetGoal(0, -1);
+        else if (y == kPuzzleHeight)
+            puzzle.SetGoal(0, kPuzzleHeight + 1);
     }
     auto empty = puzzle;
     empty.Clear();

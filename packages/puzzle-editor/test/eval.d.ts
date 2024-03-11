@@ -1,18 +1,3 @@
-// noinspection SpellCheckingInspection
-interface Data {
-  id: string;
-  contents: string;
-  title: string;
-  description: string;
-  creator: string;
-  isPrivate: boolean;
-  solves: number;
-  upvotes: number;
-  creatorName: string;
-  createUtc: number;
-  voted: number;
-}
-
 interface Shape {
   width: number;
   grid: boolean[];
@@ -34,3 +19,20 @@ interface Storage {
   entity: Entity[];
   symmetry: number;
 }
+
+// noinspection SpellCheckingInspection
+interface Data {
+  id: string;
+  contents: string;
+  title: string;
+  description: string;
+  creator: string;
+  isPrivate: boolean;
+  solves: number;
+  upvotes: number;
+  creatorName: string;
+  createUtc: number;
+  voted: number;
+}
+
+type Rec = Map<string, Set<string>>;

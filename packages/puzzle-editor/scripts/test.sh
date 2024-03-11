@@ -1,5 +1,5 @@
 set -e
-data="filtered"
+data="2022-11-29"
 cd "$(git rev-parse --show-toplevel)/packages/puzzle-editor"
 cmake --fresh --preset=clang
 cmake --build --preset=test

@@ -9,8 +9,10 @@ import {
   rmSync,
   openSync,
 } from "node:fs";
+import { EOL } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+// ts-ignore
 import protobuf from "protobufjs";
 
 const { loadProtoFile } = protobuf;
@@ -27,7 +29,7 @@ if (process.argv.length <= 2) {
   console.error("Usage: node eval.mjs <data_file>");
   process.exit(1);
 }
-if (!existsSync(resolve(__dirname, "data/", process.argv[2]))) {
+if (!existsSync(resolve(__dirname, `data/${process.argv[2]}`))) {
   // eslint-disable-next-line no-console -- node script
   console.error("File not found");
   process.exit(1);
@@ -38,11 +40,11 @@ if (!existsSync(resolve(__dirname, "data/", process.argv[2]))) {
 }
 
 /**
- * @param {Storage} storage
+ * @param {?Storage} storage
  * @returns boolean
  */
 function filter(storage) {
-  if (storage.width !== 9) return false;
+  if (!storage || storage.width !== 9) return false;
   if (
     storage.entity.find((value) => {
       return value.type >= 8;
@@ -59,13 +61,11 @@ function filter(storage) {
   /** @type Entity[] */
   const expanded = [];
   storage.entity.forEach((e) => {
-    if (e.count !== 0) {
-      for (let i = 0; i < e.count; i++) {
-        expanded.push({...e, count: 0});
+    if (e.count !== 0)
+      for (let i = 0; i < e.count; ++i) {
+        expanded.push({ ...e, count: 0 });
       }
-    } else {
-      expanded.push(e);
-    }
+    else expanded.push(e);
   });
   if (Math.floor(expanded.length / storage.width) !== 9) return false;
   storage.entity = expanded;
@@ -76,37 +76,55 @@ function filter(storage) {
 let data;
 try {
   data = JSON.parse(
-    readFileSync(resolve(__dirname, "data/", process.argv[2]), "utf8"),
+    readFileSync(resolve(__dirname, `data/${process.argv[2]}`), "utf8"),
   );
 } catch (e) {
   // eslint-disable-next-line no-console -- node script
   console.error(e);
   process.exit(1);
 }
-const date = process.argv[2].replace(".json", "");
-const dist = resolve(__dirname, "data/", `${date}.txt`,);
-if (existsSync(dist)) rmSync(dist, {force: true});
-const fd = openSync(dist, "a+");
-/** @type Set<string> */
-const recorded = new Set();
 
-for (let i = 0; i < data.length; ++i) {
-  const encoded = data[i].contents.replace("_0", "");
-  /** @type Storage */
-  let storage;
+/** @type Set<string> */
+const blacklist = new Set();
+try {
+  readFileSync(resolve(__dirname, "data/blacklist.txt"), "utf8")
+    .split(EOL)
+    .forEach((line) => {
+      if (line) blacklist.add(line);
+    });
+} catch (e) {
+  // ignore
+  console.error(e);
+}
+
+const dist = resolve(
+  __dirname,
+  `data/${process.argv[2].replace(".json", ".txt")}`,
+);
+rmSync(dist, { force: true });
+const fd = openSync(dist, "a+");
+/** @type Rec */
+const recorded = new Map();
+data.forEach((value) => {
+  if (value.upvotes >= 40 || blacklist.has(value.id)) return;
+  const encoded = value.contents.replace("_0", "");
+  if (recorded.has(encoded)) {
+    recorded.get(encoded).add(value.id);
+    return;
+  }
+  /** @type {?Storage} */
+  let storage = null;
   try {
     storage = STORAGE.decode64(encoded);
   } catch (_) {
     // ignore
   }
-  if (!storage) continue;
-  if (data[i].upvotes >= 40 || recorded.has(encoded) || !filter(storage))
-    continue;
+  if (!filter(storage)) return;
   appendFileSync(
     fd,
-    `${data[i].id}/${data[i].createUtc}/${data[i].upvotes}/${JSON.stringify(storage)}\n`,
+    `${value.id}/${value.createUtc}/${value.upvotes}/${JSON.stringify(storage)}\n`,
     "utf8",
   );
-  recorded.add(data[i].id);
-}
+  recorded.set(encoded, new Set([value.id]));
+});
 closeSync(fd);
