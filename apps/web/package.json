@@ -11,7 +11,7 @@
     "@ant-design/icons": "^5.3.1",
     "@ant-design/nextjs-registry": "^1.0.0",
     "@repo/puzzle-editor": "workspace:*",
-    "antd": "^5.15.0",
+    "antd": "^5.15.1",
     "next": "^14.1.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
