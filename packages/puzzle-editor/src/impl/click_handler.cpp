@@ -2,7 +2,6 @@
 
 #include "entropy_util.h"
 #include "handler.h"
-#include "solution_util.h"
 
 auto kCursor = point3d{0, 0, 0};
 auto kCursorViewport = 0;

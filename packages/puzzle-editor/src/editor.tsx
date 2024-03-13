@@ -76,6 +76,8 @@ export function Editor(): React.JSX.Element {
             icon={showDetails ? <EyeInvisibleOutlined /> : <EyeOutlined />}
             onClick={() => {
               setShowDetails(!showDetails);
+              // eslint-disable-next-line no-console -- show details
+              if (showDetails) console.log(data);
             }}
             size="small"
             type="primary"
@@ -203,7 +205,8 @@ export function Editor(): React.JSX.Element {
   useEffect(() => {
     if (message.current?.innerHTML) {
       try {
-        propose(JSON.parse(message.current.innerHTML) as Data);
+        const data = JSON.parse(message.current.innerHTML);
+        if ("entropy" in data) propose(data as Data);
       } catch (_) {
         /* empty */
       }
@@ -293,7 +296,12 @@ export function Editor(): React.JSX.Element {
                   onClick={() => {
                     module.keyEvent("z");
                     if (message.current?.innerHTML) {
-                      propose(JSON.parse(message.current.innerHTML) as Data);
+                      try {
+                        const data = JSON.parse(message.current.innerHTML);
+                        if ("entropy" in data) propose(data as Data);
+                      } catch (_) {
+                        //
+                      }
                     }
                   }}
                   type="link"

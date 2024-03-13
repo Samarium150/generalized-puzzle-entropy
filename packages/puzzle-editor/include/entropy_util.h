@@ -14,6 +14,7 @@ inline auto GetCurrentAdvEntropy(const Witness<kPuzzleWidth, kPuzzleHeight>& env
 }
 
 inline void UpdateEntropy(const Witness<kPuzzleWidth, kPuzzleHeight>& env) {
+    kIWS.Reset();
     kEntropyInfo = GetCurrentEntropy(env);
     kAdvEntropyInfo = GetCurrentAdvEntropy(env);
 }

@@ -1,5 +1,6 @@
 #include "handler.h"
 #include "infer_util.h"
+#include "the_witness_inference_rule.h"
 
 auto kInferRecord = std::unordered_map<std::string, double>{};
 auto kBest = std::vector<Witness<kPuzzleWidth, kPuzzleHeight>>{};
@@ -83,7 +84,12 @@ void KeyboardHandler(const std::size_t id, tKeyboardModifier /*mod*/, const char
             auto witness = Witness<kPuzzleWidth, kPuzzleHeight>();
             ss >> witness;
             kPuzzle = witness;
+            kAllSolutions.clear();
+            kSolutionTree.clear();
+            kState.Reset();
+            GetAllSolutions(kPuzzle, kState, kAllSolutions);
             UpdateSolutionIndices();
+            BuildTree(kPuzzle, kAllSolutions, kSolutionTree);
             std::thread(UpdateEntropy, std::ref(kPuzzle)).detach();
             break;
         }
