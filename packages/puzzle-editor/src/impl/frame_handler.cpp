@@ -46,8 +46,7 @@ static void DrawGameViewport(const std::size_t id) {
                          Graphics::textAlignRight, Graphics::textBaselineTop);
     if (!kBest.empty()) {
         display.DrawText(
-            (std::to_string(kCurrentBest + 1) + std::string(" of ") + std::to_string(kBest.size()))
-                .c_str(),
+            (std::to_string(kCurrentBest + 1) + " of " + std::to_string(kBest.size())).c_str(),
             point3d{1, 1}, Colors::black, 0.075, Graphics::textAlignRight,
             Graphics::textBaselineBottom);
     }

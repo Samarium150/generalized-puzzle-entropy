@@ -84,8 +84,6 @@ void KeyboardHandler(const std::size_t id, tKeyboardModifier /*mod*/, const char
             auto witness = Witness<kPuzzleWidth, kPuzzleHeight>();
             ss >> witness;
             kPuzzle = witness;
-            kAllSolutions.clear();
-            kSolutionTree.clear();
             kState.Reset();
             GetAllSolutions(kPuzzle, kState, kAllSolutions);
             UpdateSolutionIndices();
