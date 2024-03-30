@@ -1,3 +1,4 @@
+#include <CLI/CLI.hpp>
 #include <fstream>
 
 #include "solution_util.h"
@@ -38,13 +39,21 @@ static auto Calculate(const Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
 }
 
 int main(const int argc, char **argv) {
-    if (argc != 2) {
-        std::cerr << "Usage: " << argv[0] << " <input_file>" << std::endl;
-        return 1;
-    }
-    kEntropy.SetRelative(true).ruleSet.SetRules(
-        kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
-    std::ifstream input(std::string(argv[1]), std::ios::in);
+    CLI::App app;
+    app.allow_windows_style_options();
+    std::string filename;
+    app.add_option("filename", filename, "input data file")->required();
+    std::vector<int> inferenceFilter{};
+    app.add_option("--inference_filter", inferenceFilter, "filter out specified inference rules")
+        ->expected(0, kInferenceRuleCount - 1)
+        ->required(false);
+    CLI11_PARSE(app, argc, argv)
+
+    kEntropy.SetRelative(true);
+    kEntropy.ruleSet.SetRules(kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
+    std::for_each(inferenceFilter.begin(), inferenceFilter.end(),
+                  [](const auto f) { kEntropy.ruleSet.DisableRule(f); });
+    std::ifstream input(filename, std::ios::in);
     std::ofstream output("results.csv", std::ios::out);
     if (!input.is_open() || !output.is_open()) {
         std::cerr << "Failed to open file" << std::endl;

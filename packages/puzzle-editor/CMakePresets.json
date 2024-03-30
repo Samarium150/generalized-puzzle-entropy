@@ -16,13 +16,17 @@
     },
     {
       "name": "emscripten",
-      "inherits": ["base"],
+      "inherits": [
+        "base"
+      ],
       "toolchainFile": "lib/emsdk/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake",
       "binaryDir": "cmake-build-emscripten"
     },
     {
       "name": "clang",
-      "inherits": ["base"],
+      "inherits": [
+        "base"
+      ],
       "cacheVariables": {
         "CMAKE_C_COMPILER": "clang",
         "CMAKE_CXX_COMPILER": "clang++"
@@ -34,7 +38,10 @@
     {
       "name": "src",
       "configurePreset": "emscripten",
-      "targets": ["editor", "playground"],
+      "targets": [
+        "editor",
+        "playground"
+      ],
       "cleanFirst": true
     },
     {
