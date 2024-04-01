@@ -2,7 +2,11 @@
 	path = packages/puzzle-editor/lib/emsdk
 	url = https://github.com/emscripten-core/emsdk.git
 	shallow = true
+	branch = main
+	update = rebase
 [submodule "packages/puzzle-editor/lib/hog2"]
 	path = packages/puzzle-editor/lib/hog2
 	url = https://github.com/Samarium150/hog2.git
 	shallow = true
+	branch = main
+	update = rebase
