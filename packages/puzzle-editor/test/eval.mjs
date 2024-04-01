@@ -12,7 +12,6 @@ import {
 import { EOL } from "node:os";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-// ts-ignore
 import protobuf from "protobufjs";
 
 const { loadProtoFile } = protobuf;
@@ -41,13 +40,13 @@ if (!existsSync(resolve(__dirname, `data/${process.argv[2]}`))) {
 
 /**
  * @param {?Storage} storage
- * @returns boolean
+ * @returns {boolean}
  */
 function filter(storage) {
   if (!storage || storage.width !== 9) return false;
   if (
     storage.entity.find((value) => {
-      return value.type >= 8;
+      return value.type === 9 || value.type === 10;
     }) ||
     storage.entity.filter((value) => {
       return value.type === 3;
@@ -58,7 +57,7 @@ function filter(storage) {
   )
     return false;
   if (storage.symmetry === 1) return false;
-  /** @type Entity[] */
+  /** @type {Entity[]} */
   const expanded = [];
   storage.entity.forEach((e) => {
     if (e.count !== 0)
@@ -72,7 +71,7 @@ function filter(storage) {
   return true;
 }
 
-/** @type Data[] */
+/** @type {Data[]} */
 let data;
 try {
   data = JSON.parse(
@@ -84,7 +83,7 @@ try {
   process.exit(1);
 }
 
-/** @type Set<string> */
+/** @type {Set.<string>} */
 const blacklist = new Set();
 try {
   readFileSync(resolve(__dirname, "data/blacklist.txt"), "utf8")
@@ -94,7 +93,18 @@ try {
     });
 } catch (e) {
   // ignore
-  console.error(e);
+}
+
+/** @type {Map.<string, string>} */
+const errata = new Map();
+try {
+  JSON.parse(
+    readFileSync(resolve(__dirname, "data/errata.json"), "utf8"),
+  ).forEach((value) => {
+    errata.set(value.id, value.contents);
+  });
+} catch (e) {
+  // ignore
 }
 
 const dist = resolve(
@@ -103,11 +113,13 @@ const dist = resolve(
 );
 rmSync(dist, { force: true });
 const fd = openSync(dist, "a+");
-/** @type Rec */
+/** @type {Map.<string, Set.<string>>} */
 const recorded = new Map();
 data.forEach((value) => {
   if (value.upvotes >= 40 || blacklist.has(value.id)) return;
-  const encoded = value.contents.replace("_0", "");
+  const encoded = errata.has(value.id)
+    ? errata.get(value.id)
+    : value.contents.replace("_0", "");
   if (recorded.has(encoded)) {
     recorded.get(encoded).add(value.id);
     return;

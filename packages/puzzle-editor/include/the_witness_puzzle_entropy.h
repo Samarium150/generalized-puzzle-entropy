@@ -106,4 +106,30 @@ public:
         H::actCache.returnItem(&actions);
         return CalculateAdversarialEntropy(env, state, lookahead);
     }
+
+    double CalculateConditionalSolutionInformation(const Witness<width, height>& env,
+                                                   WitnessState<width, height>& state) {
+        if (env.GoalTest(state)) return 0.0;
+        auto& actions = *H::actCache.getItem();
+        env.GetActions(state, actions);
+        H::ruleSet.FilterActions(env, state, actions);
+        if (actions.empty()) {
+            H::actCache.returnItem(&actions);
+            return H::inf;
+        }
+        auto& children = *H::doubleCache.getItem();
+        for (const auto& action : actions) {
+            env.ApplyAction(state, action);
+            children.emplace_back(CalculateConditionalSolutionInformation(env, state));
+            env.UndoAction(state, action);
+        }
+        H::actCache.returnItem(&actions);
+        double information =
+            std::log2(children.size() / std::accumulate(children.cbegin(), children.cend(), 0.0,
+                                                        [](const auto& sum, const auto& info) {
+                                                            return sum + std::exp2(-info);
+                                                        }));
+        H::doubleCache.returnItem(&children);
+        return information;
+    }
 };

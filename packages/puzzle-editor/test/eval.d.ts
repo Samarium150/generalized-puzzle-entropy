@@ -1,3 +1,5 @@
+declare module "protobufjs";
+
 interface Shape {
   width: number;
   grid: boolean[];
@@ -34,5 +36,3 @@ interface Data {
   createUtc: number;
   voted: number;
 }
-
-type Rec = Map<string, Set<string>>;

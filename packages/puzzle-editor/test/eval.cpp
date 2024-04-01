@@ -15,12 +15,12 @@ static auto kAllSolutions = std::vector<WitnessState<kPuzzleWidth, kPuzzleHeight
 auto kSolutionTree = std::vector<SolutionTreeNode>();
 
 static void Init(Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
-    if (const auto [x, y] = puzzle.goal[0]; x < 0) {
-        if (y == 0)
-            puzzle.SetGoal(0, -1);
-        else if (y == kPuzzleHeight)
-            puzzle.SetGoal(0, kPuzzleHeight + 1);
-    }
+    //    if (const auto [x, y] = puzzle.goal[0]; x < 0) {
+    //        if (y == 0)
+    //            puzzle.SetGoal(0, -1);
+    //        else if (y == kPuzzleHeight)
+    //            puzzle.SetGoal(0, kPuzzleHeight + 1);
+    //    }
     auto empty = puzzle;
     empty.Clear();
     kState.Reset();
@@ -35,6 +35,7 @@ static auto Calculate(const Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
     const auto [entropy, i] = kEntropy.Calculate(puzzle, kState, 0, std::nullopt);
     kState.Reset();
     const auto [advEntropy, j, k] = kEntropy.CalculateAdversarialEntropy(puzzle, kState, 0);
+    kState.Reset();
     return std::make_pair(entropy, advEntropy);
 }
 
@@ -49,7 +50,7 @@ int main(const int argc, char **argv) {
         ->required(false);
     CLI11_PARSE(app, argc, argv)
 
-    kEntropy.SetRelative(true);
+    kEntropy.SetBase2(true).SetRelative(true);
     kEntropy.ruleSet.SetRules(kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
     std::for_each(inferenceFilter.begin(), inferenceFilter.end(),
                   [](const auto f) { kEntropy.ruleSet.DisableRule(f); });
@@ -59,7 +60,7 @@ int main(const int argc, char **argv) {
         std::cerr << "Failed to open file" << std::endl;
         return 1;
     }
-    output << "id,timestamp,upvote,entropy,adv_entropy,solutions" << std::endl;
+    output << "id,timestamp,upvote,entropy,adv_entropy,csi,solutions" << std::endl;
     unsigned i = 0;
     const auto total = count(input) - static_cast<std::size_t>(GetLastLine(input).empty());
     for (std::string line; std::getline(input, line);) {
@@ -69,17 +70,22 @@ int main(const int argc, char **argv) {
             std::cerr << "Invalid data" << std::endl;
             return 1;
         }
-        std::cout << "processing: " << ++i << "/" << total << std::endl;
+        std::cout << "processing: " << parts[0] << " (" << ++i << "/" << total << ")" << std::endl;
         std::istringstream iss(parts[3]);
         auto puzzle = Witness<4, 4>();
         iss >> puzzle;
+        if (const auto [x, y] = puzzle.goal[0]; x < 0) {
+            std::cout << "skipped: " << i << "/" << parts[0] << std::endl;
+            continue;
+        }
         Init(puzzle);
         const auto [entropy, advEntropy] = Calculate(puzzle);
+        const auto csi = kEntropy.CalculateConditionalSolutionInformation(puzzle, kState);
         const auto solutions = GetNumSolutions(puzzle, kAllSolutions);
         std::ostringstream oss;
         oss << parts[0] << "," << parts[1] << "," << parts[2] << ","
             << ((entropy == kInf) ? "inf" : std::to_string(entropy)) << "," << advEntropy << ","
-            << solutions << std::endl;
+            << ((csi == kInf) ? "inf" : std::to_string(csi)) << "," << solutions << std::endl;
         output << oss.str();
     }
     input.close();

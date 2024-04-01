@@ -4,5 +4,10 @@
     "allowJs": true,
     "outDir": "dist"
   },
-  "include": ["src", "test", "index.tsx"]
+  "include": [
+    "src",
+    "test/eval.mjs",
+    "test/eval.d.ts",
+    "index.tsx"
+  ]
 }
