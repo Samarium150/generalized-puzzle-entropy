@@ -8,7 +8,8 @@ auto kCursorViewport = 0;
 auto kSelectedEditorItem = -1;
 auto kSolved = false;
 
-bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/, point3d p,
+bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/,
+                  point3d p,  // NOLINT
                   tButtonType /*type*/, const tMouseEventType event) {
     switch (viewport) {
         case 0:

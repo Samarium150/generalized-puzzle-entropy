@@ -14,7 +14,7 @@ static auto kEntropy = WitnessPuzzleEntropy<kPuzzleWidth, kPuzzleHeight>{};
 static auto kAllSolutions = std::vector<WitnessState<kPuzzleWidth, kPuzzleHeight>>{};
 auto kSolutionTree = std::vector<SolutionTreeNode>();
 
-static void Init(Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
+static void Init(const Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
     //    if (const auto [x, y] = puzzle.goal[0]; x < 0) {
     //        if (y == 0)
     //            puzzle.SetGoal(0, -1);

@@ -12,7 +12,7 @@ auto kSolutionIndex = 0u;
 auto kSolved = false;
 auto kState = WitnessState<kPuzzleWidth, kPuzzleHeight>{};
 
-bool ClickHandler(std::size_t /*id*/, int /*viewport*/, int /*x*/, int /*y*/, point3d p,
+bool ClickHandler(std::size_t /*id*/, int /*viewport*/, int /*x*/, int /*y*/, point3d p,  // NOLINT
                   tButtonType /*type*/, const tMouseEventType event) {
     if (event == kMouseUp && kPuzzle.Click(p, kIWS)) {
         if (kPuzzle.GoalTest(kIWS.ws)) {

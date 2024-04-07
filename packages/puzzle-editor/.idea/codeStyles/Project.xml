@@ -5,6 +5,9 @@
         <fileSet type="globPattern" pattern="lib/**" />
       </list>
     </option>
+    <RiderCodeStyleSettings>
+      <option name="/Default/CodeStyle/CodeFormatting/CppClangFormat/EnableClangFormatSupport/@EntryValue" value="true" type="bool" />
+    </RiderCodeStyleSettings>
     <clangFormatSettings>
       <option name="ENABLED" value="true" />
     </clangFormatSettings>
