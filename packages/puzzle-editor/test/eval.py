@@ -13,6 +13,8 @@ DATE = "2024-02-20"
 INTERCEPT = np.float64(67.33339206338432)
 SLOPE = np.float64(-3.987906486478669e-11)
 rcParams['figure.dpi'] = 300
+# noinspection SpellCheckingInspection
+MARKER_SIZE = rcParams["lines.markersize"]
 
 
 def ranking():
@@ -37,8 +39,9 @@ def ranking():
         )
 
 
-def normalize(up_votes: np.int32, timestamp: np.int64) -> np.float64:
-    return np.float64(up_votes - (SLOPE * timestamp + INTERCEPT))
+def get_marker_size(arr: np.ndarray) -> np.ndarray:
+    t = (arr - np.min(arr)) ** 2
+    return t / np.max(t) * MARKER_SIZE * 20 + MARKER_SIZE * 0.1
 
 
 def plot():
@@ -46,6 +49,7 @@ def plot():
     x2 = np.array([], dtype=np.float64)
     x3 = np.array([], dtype=np.float64)
     s = np.array([], dtype=np.float64)
+    t = np.array([], dtype=np.int64)
     y = np.array([], dtype=np.float64)
     with open("results.csv", "r") as f:
         reader = csv.DictReader(f)
@@ -53,17 +57,21 @@ def plot():
         for row in reader:
             if row["entropy"] == "inf":
                 continue
+            timestamp = np.int64(row["timestamp"])
+            upvote = np.int32(row["upvote"])
             entropy = np.float64(row["entropy"])
             adv_entropy = np.float64(row["adv_entropy"])
             csi = np.float64(row["csi"])
             solutions = np.int32(row["solutions"])
-            upvote = np.int32(row["upvote"])
-            timestamp = np.int64(row["timestamp"])
+            t = np.append(t, timestamp)
+            y = np.append(y, upvote)
             x1 = np.append(x1, entropy)
             x2 = np.append(x2, adv_entropy)
             x3 = np.append(x3, csi)
             s = np.append(s, solutions)
-            y = np.append(y, normalize(upvote, timestamp))
+
+    norm = linregress(t, y)
+    y = y - (norm.slope * t + norm.intercept)
 
     result = linregress(x1, y)
     print(result)
@@ -93,6 +101,18 @@ def plot():
     plt.xlabel("CSI")
     plt.ylabel("Upvote")
     plt.savefig("csi_vs_upvote.png")
+    plt.clf()
+
+    plt.scatter(x1, x2, get_marker_size(y), y, cmap="plasma", alpha=0.95,
+                linewidths=0.2, edgecolors="black")
+    plt.xlabel("Entropy")
+    plt.ylabel("Adv Entropy")
+    bar = plt.colorbar()
+    bar.set_label("Upvote")
+    ticks = np.linspace(np.min(y), np.max(y), 9)
+    bar.set_ticks(ticks)
+    bar.set_ticklabels([f"{int(i)}" for i in ticks])
+    plt.savefig("entropy_vs_adv_entropy.png")
     plt.clf()
 
 
