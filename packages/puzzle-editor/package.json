@@ -12,18 +12,18 @@
   },
   "dependencies": {
     "@ant-design/happy-work-theme": "^1.0.0",
-    "@ant-design/icons": "^5.3.6",
-    "antd": "^5.16.1",
-    "react": "^18.2.0"
+    "@ant-design/icons": "^5.3.7",
+    "antd": "^5.17.0",
+    "react": "^18.3.1"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/emscripten": "^1.39.10",
-    "@types/eslint": "^8.56.8",
-    "@types/node": "^20.12.7",
-    "@types/react": "^18.2.75",
-    "@types/react-dom": "^18.2.24",
+    "@types/emscripten": "^1.39.11",
+    "@types/eslint": "^8.56.10",
+    "@types/node": "^20.12.10",
+    "@types/react": "^18.3.1",
+    "@types/react-dom": "^18.3.0",
     "bytebuffer": "5.0.1",
     "eslint": "^8.57.0",
     "long": "3.2.0",
