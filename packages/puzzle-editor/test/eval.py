@@ -4,17 +4,20 @@ import csv
 import json
 from typing import Dict, List, Tuple
 
-from matplotlib import rcParams, pyplot as plt
+import matplotlib.pyplot as plt
 import numpy as np
-from scipy.stats import linregress
+import pandas as pd
+import seaborn as sns
+from sklearn.feature_selection import r_regression
+from sklearn.linear_model import LinearRegression
 
 DATE = "2024-02-20"
 # retrieved from https://ideaowl.com/remuse
 INTERCEPT = np.float64(67.33339206338432)
 SLOPE = np.float64(-3.987906486478669e-11)
-rcParams['figure.dpi'] = 300
-# noinspection SpellCheckingInspection
-MARKER_SIZE = rcParams["lines.markersize"]
+sns.set_theme(rc={"figure.dpi": 300})
+DATA_TYPES = {"id": object, "timestamp": np.int64, "upvote": np.int32, "entropy": np.float64,
+              "adv_entropy": np.float64, "tsi": np.float64, "solutions": np.int32, "solves": np.int32}
 
 
 def ranking():
@@ -39,79 +42,56 @@ def ranking():
         )
 
 
-def get_marker_size(arr: np.ndarray) -> np.ndarray:
-    t = (arr - np.min(arr)) ** 2
-    return t / np.max(t) * MARKER_SIZE * 20 + MARKER_SIZE * 0.1
-
-
 def plot():
-    x1 = np.array([], dtype=np.float64)
-    x2 = np.array([], dtype=np.float64)
-    x3 = np.array([], dtype=np.float64)
-    s = np.array([], dtype=np.float64)
-    t = np.array([], dtype=np.int64)
-    y = np.array([], dtype=np.float64)
-    with open("results.csv", "r") as f:
-        reader = csv.DictReader(f)
-        row: Dict[str, str]
-        for row in reader:
-            if row["entropy"] == "inf":
-                continue
-            timestamp = np.int64(row["timestamp"])
-            upvote = np.int32(row["upvote"])
-            entropy = np.float64(row["entropy"])
-            adv_entropy = np.float64(row["adv_entropy"])
-            csi = np.float64(row["csi"])
-            solutions = np.int32(row["solutions"])
-            t = np.append(t, timestamp)
-            y = np.append(y, upvote)
-            x1 = np.append(x1, entropy)
-            x2 = np.append(x2, adv_entropy)
-            x3 = np.append(x3, csi)
-            s = np.append(s, solutions)
+    data = pd.read_csv("results.csv", dtype=DATA_TYPES)
+    timestamp = data[["timestamp"]]
+    upvote = data["upvote"]
+    solves = data["solves"]
 
-    norm = linregress(t, y)
-    y = y - (norm.slope * t + norm.intercept)
+    reg = LinearRegression()
+    reg.fit(timestamp, upvote)
+    upvote -= reg.predict(timestamp)
 
-    result = linregress(x1, y)
-    print(result)
-    plt.scatter(x1, y)
-    plt.plot(x1, result.slope * x1 + result.intercept, color="black")
-    plt.text(np.max(x1) - 1.5, np.max(y) - 1, "r = {:.3f}".format(result.rvalue))
-    plt.xlabel("Entropy")
-    plt.ylabel("Upvote")
+    reg.fit(timestamp, solves)
+    solves -= reg.predict(timestamp)
+
+    data["upvote"] = upvote
+    data["solves"] = solves
+
+    text_y = np.max(upvote) - 1
+
+    entropy = data[["entropy"]]
+    ax = sns.regplot(data, x="entropy", y="upvote", ci=None, line_kws={"color": "black"})
+    ax.text(np.max(entropy) - 1.5, text_y, f"r = {r_regression(entropy, upvote)[0]:.3f}")
+    ax.set(xlabel="Entropy", ylabel="Upvote")
     plt.savefig("entropy_vs_upvote.png")
     plt.clf()
 
-    result = linregress(x2, y)
-    print(result)
-    plt.scatter(x2, y)
-    plt.plot(x2, result.slope * x2 + result.intercept, color="black")
-    plt.text(np.max(x2) - 1.5, np.max(y) - 1, "r = {:.3f}".format(result.rvalue))
-    plt.xlabel("Adv Entropy")
-    plt.ylabel("Upvote")
+    adv_entropy = data[["adv_entropy"]]
+    ax = sns.regplot(data, x="adv_entropy", y="upvote", ci=None, line_kws={"color": "black"})
+    ax.text(np.max(adv_entropy) - 1.5, text_y, f"r = {r_regression(adv_entropy, upvote)[0]:.3f}")
+    ax.set(xlabel="Adv Entropy", ylabel="Upvote")
     plt.savefig("adv_entropy_vs_upvote.png")
     plt.clf()
 
-    result = linregress(x3, y)
-    print(result)
-    plt.scatter(x3, y)
-    plt.plot(x3, result.slope * x3 + result.intercept, color="black")
-    plt.text(np.max(x3) - 1.5, np.max(y) - 1, "r = {:.3f}".format(result.rvalue))
-    plt.xlabel("CSI")
-    plt.ylabel("Upvote")
-    plt.savefig("csi_vs_upvote.png")
+    tsi = data[["tsi"]]
+    text_x = np.max(tsi) - 1.5
+    ax = sns.regplot(data, x="tsi", y="upvote", ci=None, line_kws={"color": "black"})
+    ax.text(text_x, text_y, f"r = {r_regression(tsi, upvote)[0]:.3f}")
+    ax.set(xlabel="TSI", ylabel="Upvote")
+    plt.savefig("tsi_vs_upvote.png")
     plt.clf()
 
-    plt.scatter(x1, x2, get_marker_size(y), y, cmap="plasma", alpha=0.95,
-                linewidths=0.2, edgecolors="black")
-    plt.xlabel("Entropy")
-    plt.ylabel("Adv Entropy")
-    bar = plt.colorbar()
-    bar.set_label("Upvote")
-    ticks = np.linspace(np.min(y), np.max(y), 9)
-    bar.set_ticks(ticks)
-    bar.set_ticklabels([f"{int(i)}" for i in ticks])
+    ax = sns.regplot(data, x="tsi", y="solves", ci=None, line_kws={"color": "black"})
+    ax.text(text_x, np.max(solves) - 1, f"r = {r_regression(tsi, solves)[0]:.3f}")
+    ax.set(xlabel="TSI", ylabel="Solves")
+    plt.savefig("tsi_vs_solves.png")
+    plt.clf()
+
+    ax = sns.relplot(data, x="entropy", y="adv_entropy", hue="upvote", size="upvote",
+                     palette="plasma", alpha=0.95)
+    ax.set(xlabel="Entropy", ylabel="Adv Entropy")
+    ax.legend.set_title("Upvote")
     plt.savefig("entropy_vs_adv_entropy.png")
     plt.clf()
 

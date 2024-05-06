@@ -5,9 +5,9 @@ import {
   appendFileSync,
   closeSync,
   existsSync,
+  openSync,
   readFileSync,
   rmSync,
-  openSync,
 } from "node:fs";
 import { EOL } from "node:os";
 import { dirname, resolve } from "node:path";
@@ -46,7 +46,7 @@ function filter(storage) {
   if (!storage || storage.width !== 9) return false;
   if (
     storage.entity.find((value) => {
-      return value.type === 9 || value.type === 10;
+      return [9, 10].includes(value.type);
     }) ||
     storage.entity.filter((value) => {
       return value.type === 3;
@@ -134,7 +134,7 @@ data.forEach((value) => {
   if (!filter(storage)) return;
   appendFileSync(
     fd,
-    `${value.id}/${value.createUtc}/${value.upvotes}/${JSON.stringify(storage)}\n`,
+    `${value.id}/${value.createUtc}/${value.upvotes}/${value.solves}/${JSON.stringify(storage)}\n`,
     "utf8",
   );
   recorded.set(encoded, new Set([value.id]));

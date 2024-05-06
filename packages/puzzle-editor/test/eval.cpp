@@ -39,43 +39,45 @@ int main(const int argc, char **argv) {
     std::string filename;
     app.add_option("filename", filename, "input data file")->required();
     std::vector<int> inferenceFilter{};
-    app.add_option("--inference_filter", inferenceFilter, "filter out specified inference rules")
-        ->expected(0, kInferenceRuleCount - 1)
+    app.add_option("--inference_filter", inferenceFilter, "disbale specified inference rules")
+        ->expected(0, kInferenceRuleCount)
         ->required(false);
     CLI11_PARSE(app, argc, argv)
 
     kEntropy.SetBase2(true).SetRelative(true);
     kEntropy.ruleSet.SetRules(kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
-    std::for_each(inferenceFilter.begin(), inferenceFilter.end(),
-                  [](const auto f) { kEntropy.ruleSet.DisableRule(f); });
+    std::for_each(inferenceFilter.begin(), inferenceFilter.end(), [](const auto f) {
+        if (f >= 0 && f < kInferenceRuleCount) kEntropy.ruleSet.DisableRule(f);
+    });
     std::ifstream input(filename, std::ios::in);
     std::ofstream output("results.csv", std::ios::out);
     if (!input.is_open() || !output.is_open()) {
         std::cerr << "Failed to open file" << std::endl;
         return 1;
     }
-    output << "id,timestamp,upvote,entropy,adv_entropy,csi,solutions" << std::endl;
+    output << "id,timestamp,upvote,entropy,adv_entropy,tsi,solutions,solves" << std::endl;
     unsigned i = 0;
     const auto total = count(input) - static_cast<std::size_t>(GetLastLine(input).empty());
     for (std::string line; std::getline(input, line);) {
         auto parts = std::vector<std::string>();
         split(line, '/', parts);
-        if (parts.size() != 4) {
+        if (parts.size() != 5) {
             std::cerr << "Invalid data" << std::endl;
             return 1;
         }
         std::cout << "processing: " << parts[0] << " (" << ++i << "/" << total << ")" << std::endl;
-        std::istringstream iss(parts[3]);
-        auto puzzle = Witness<4, 4>();
+        std::istringstream iss(parts[4]);
+        auto puzzle = Witness<kPuzzleWidth, kPuzzleHeight>();
         iss >> puzzle;
         Init(puzzle);
         const auto [entropy, advEntropy] = Calculate(puzzle);
-        const auto csi = kEntropy.CalculateConditionalSolutionInformation(puzzle, kState);
+        const auto tsi = kEntropy.CalculateTotalSolutionInformation(puzzle, kState);
         const auto solutions = GetNumSolutions(puzzle, kAllSolutions);
         std::ostringstream oss;
         oss << parts[0] << "," << parts[1] << "," << parts[2] << ","
             << ((entropy == kInf) ? "inf" : std::to_string(entropy)) << "," << advEntropy << ","
-            << ((csi == kInf) ? "inf" : std::to_string(csi)) << "," << solutions << std::endl;
+            << ((tsi == kInf) ? "inf" : std::to_string(tsi)) << "," << solutions << "," << parts[3]
+            << std::endl;
         output << oss.str();
     }
     input.close();
