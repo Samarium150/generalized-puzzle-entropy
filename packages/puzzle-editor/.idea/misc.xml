@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Black">
-    <option name="sdkName" value="Python 3.12 (puzzle-editor)" />
+    <option name="sdkName" value="Python 3 (puzzle-editor)" />
+  </component>
+  <component name="CMakePythonSetting">
+    <option name="pythonIntegrationState" value="YES" />
   </component>
   <component name="CMakeWorkspace" PROJECT_DIR="$PROJECT_DIR$" />
   <component name="CidrRootsConfiguration">
@@ -21,4 +24,5 @@
       <file path="$PROJECT_DIR$/dist" />
     </excludeRoots>
   </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="Python 3 (puzzle-editor)" project-jdk-type="Python SDK" />
 </project>

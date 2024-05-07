@@ -1,15 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<module classpath="CMake" type="CPP_MODULE" version="4">
-  <component name="FacetManager">
-    <facet type="Python" name="Python facet">
-      <configuration sdkName="Python 3 (puzzle-editor)" />
-    </facet>
-  </component>
-  <component name="PyNamespacePackagesService">
-    <option name="namespacePackageFolders">
-      <list>
-        <option value="$MODULE_DIR$/.venv" />
-      </list>
-    </option>
+<module version="4">
+  <component name="PyDocumentationSettings">
+    <option name="format" value="PLAIN" />
+    <option name="myDocStringFormat" value="Plain" />
   </component>
 </module>
