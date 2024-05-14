@@ -1,6 +1,5 @@
 {
   "name": "web",
-  "type": "module",
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",

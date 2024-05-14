@@ -1,12 +1,11 @@
-// @ts-check
 // noinspection SpellCheckingInspection
 
 /**
- * @param {string} phase
+ * @param {string} _
  * @param {{ defaultConfig: import('next').NextConfig }} options
  * @return {import('next').NextConfig}
  */
-export default (phase, { defaultConfig }) => {
+export default (_, { defaultConfig }) => {
   return {
     ...defaultConfig,
     async headers() {

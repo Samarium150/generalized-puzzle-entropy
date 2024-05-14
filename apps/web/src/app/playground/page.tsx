@@ -39,7 +39,6 @@ export default function Page(): JSX.Element {
         </Sider>
         <Content className="w-max px-6 py-3">
           <Script src="/js/playground.js" strategy="beforeInteractive" />
-          <Script src="/js/playground.worker.js" strategy="afterInteractive" />
           <Script src="/js/utils.js" strategy="afterInteractive" />
           <Playground />
         </Content>

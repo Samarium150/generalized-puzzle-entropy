@@ -5,7 +5,7 @@
   },
   "include": [
     "next-env.d.ts",
-    "*.config.js",
+    "*.config.*",
     "**/*.ts",
     "**/*.tsx",
     ".next/types/**/*.ts",

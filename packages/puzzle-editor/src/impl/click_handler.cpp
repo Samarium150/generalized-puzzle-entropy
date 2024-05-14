@@ -23,7 +23,7 @@ bool ClickHandler(std::size_t /*id*/, const int viewport, int /*x*/, int /*y*/,
                         kIWS.Reset();
                     }
                 }
-                if (event == kMouseMove) kPuzzle.Move(p, kIWS);
+                if (event == kMouseDrag || event == kMouseMove) kPuzzle.Move(p, kIWS);
             } else if (event == kMouseDown && kSelectedEditorItem != -1 &&
                        viewport == kCursorViewport) {
                 if (kSelectedEditorItem < kRegionConstraintItems.size()) {

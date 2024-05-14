@@ -41,7 +41,6 @@ export default function Home(): JSX.Element {
         </Sider>
         <Content className="px-6 py-3">
           <Script src="/js/editor.js" strategy="beforeInteractive" />
-          <Script src="/js/editor.worker.js" strategy="afterInteractive" />
           <Script src="/js/utils.js" strategy="afterInteractive" />
           <Flex gap="small" vertical>
             <Title className="my-0.5" level={2}>
