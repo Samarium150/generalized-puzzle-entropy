@@ -66,12 +66,20 @@ export default function Home(): JSX.Element {
                 </li>
                 <li>Click the button to open or close the editor panel.</li>
                 <li>
+                  Hexagons and disjoints are path constraints. The solution path
+                  must be across the hexagons and not across the disjoints.
+                </li>
+                <li>
                   Rounded squares are separation constraints. Two squares of the
                   different colors should not be in the same region.
                 </li>
                 <li>
                   A star should be paired with exactly one other region
                   constraint of the same color regardless the type of it.
+                </li>
+                <li>
+                  Triangles should be surrounded by the same number of edges as
+                  the number of triangles
                 </li>
                 <li>
                   Question marks are used for letting AI suggest a good
@@ -81,12 +89,8 @@ export default function Home(): JSX.Element {
                   freeze).
                 </li>
                 <li>
-                  Hexagons and disjoints are path constraints. The solution path
-                  must be across the hexagons and not across the disjoints.
-                </li>
-                <li>
-                  For loading a puzzle from the clipboard, you can choose a
-                  puzzle from{" "}
+                  For loading a puzzle from the clipboard, you can choose any{" "}
+                  <Text strong>4x4</Text> puzzle from{" "}
                   <Typography.Link
                     href="https://windmill.thefifthmatt.com"
                     target="_blank"

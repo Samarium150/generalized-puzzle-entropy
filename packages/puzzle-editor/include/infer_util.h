@@ -29,7 +29,9 @@ template <int width, int height>
             newPuzzle.RemoveUnknownConstraints(rc, pc, colors);
             if (const auto value = GetNumSolutions(newPuzzle, kAllSolutions); value != 0) {
                 kInferMutex.lock();
-                kInferRecord[newPuzzle.SaveToHashString()] = value;
+                auto state = WitnessState<width, height>{};
+                kInferRecord[newPuzzle.SaveToHashString()] =
+                    kEntropy.CalculateTotalSolutionInformation(newPuzzle, state);
                 kBest.push_back(newPuzzle);
                 kInferMutex.unlock();
             }
@@ -106,7 +108,9 @@ void Infer(const Witness<width, height>& puzzle) {
             newPuzzle.RemoveUnknownConstraints(rc, pc, colors);
             auto state = kState;
             if (const auto value = GetNumSolutions(newPuzzle, kAllSolutions); value != 0) {
-                kInferRecord[newPuzzle.SaveToHashString()] = value;
+                auto state = WitnessState<width, height>{};
+                kInferRecord[newPuzzle.SaveToHashString()] =
+                    kEntropy.CalculateTotalSolutionInformation(newPuzzle, state);
                 kBest.push_back(newPuzzle);
             }
             kCounter++;
@@ -128,7 +132,7 @@ void Infer(const Witness<width, height>& puzzle) {
     }
 #endif
     std::sort(kBest.begin(), kBest.end(), [](const auto& a, const auto& b) {
-        return kInferRecord[a.SaveToHashString()] < kInferRecord[b.SaveToHashString()];
+        return kInferRecord[a.SaveToHashString()] > kInferRecord[b.SaveToHashString()];
     });
     kInferRecord.clear();
     kTotalWorkload = 0;

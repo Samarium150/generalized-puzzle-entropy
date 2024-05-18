@@ -22,7 +22,7 @@ static void ProvideSuggestion() {
                   })
        << R"(, "numSolutions": )" << GetNumSolutions(kPuzzle, kAllSolutions) << R"(, "entropy": )"
        << ((kEntropyInfo.value == kInf) ? "inf" : std::to_string(kEntropyInfo.value))
-       << R"(, "advEntropy": )" << kAdvEntropyInfo.value << " }";
+       << std::string(R"(, "advEntropy": )") << kAdvEntropyInfo.value << std::string(" }");
     submitTextToBuffer(ss.str().c_str());
 }
 
