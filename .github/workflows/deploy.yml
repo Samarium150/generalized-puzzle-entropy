@@ -8,7 +8,14 @@ on:
     branches: [ main ]
 jobs:
   deploy:
+    permissions:
+      contents: read
+      id-token: write
+      pages: write
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -27,7 +34,18 @@ jobs:
         run: pnpm add -g vercel
       - name: Pull Vercel project settings
         run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Build
+      - name: Vercel Build
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Deploy
+      - name: Deploy on Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+      - name: Build GitHub Pages
+        run: cd apps/demo && npx slidev build --base /${{ github.event.repository.name }}/
+      - name: Upload pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/demo/dist
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
