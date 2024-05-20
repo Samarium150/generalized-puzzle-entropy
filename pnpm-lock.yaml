@@ -35,6 +35,10 @@ importers:
       vue:
         specifier: ^3.4.27
         version: 3.4.27(typescript@5.4.5)
+    devDependencies:
+      prettier-plugin-slidev:
+        specifier: ^1.0.5
+        version: 1.0.5(prettier@3.2.5)
 
   apps/web:
     dependencies:
@@ -1030,6 +1034,10 @@ packages:
 
   '@slidev/client@0.49.3':
     resolution: {integrity: sha512-pXq0aHh73emg7+4sUb4XDuI8jRt4bvbLZUvOIhcJ6YaYRnV+OqfZ2qNWFBcqOcWP/0Y7m6ws5gdV+04AnrtIFA==}
+    engines: {node: '>=18.0.0'}
+
+  '@slidev/parser@0.47.5':
+    resolution: {integrity: sha512-KvqOEhIFuMDu8CjAsehMNKlAnnmAn2TRHiEymc3CMadid05oWa5zgTxqEyMxUl2rjWpYs3A1yDiendZsGYs3HA==}
     engines: {node: '>=18.0.0'}
 
   '@slidev/parser@0.49.3':
@@ -3786,6 +3794,11 @@ packages:
       prettier:
         optional: true
 
+  prettier-plugin-slidev@1.0.5:
+    resolution: {integrity: sha512-1xaKzOAX17QAcn1roUgQIAfeio3HPYYefCgzxh6Bzk+5rJJxq0I8HUhLrUyv9nCpIP6e9CDv/yDQSdEeqqRUuA==}
+    peerDependencies:
+      prettier: ^3.2.4
+
   prettier@3.2.5:
     resolution: {integrity: sha512-3/GWa9aOC0YeD7LUfvOG2NiDyhOWRvt1k+rcKhOuYnMY24iiCphgneUfJDyFXd6rZCAnuLBv6UeAULtrhT/F4A==}
     engines: {node: '>=14'}
@@ -6066,6 +6079,11 @@ snapshots:
       - vite
       - vue-template-compiler
       - vue-template-es2015-compiler
+
+  '@slidev/parser@0.47.5':
+    dependencies:
+      '@slidev/types': 0.47.5
+      js-yaml: 4.1.0
 
   '@slidev/parser@0.49.3(@vue/compiler-sfc@3.4.27)(postcss@8.4.38)(rollup@4.17.2)(typescript@5.4.5)(vite@5.2.11(@types/node@20.12.12))(vue-template-compiler@2.7.16)':
     dependencies:
@@ -9542,6 +9560,11 @@ snapshots:
       sort-package-json: 2.8.0
       synckit: 0.9.0
     optionalDependencies:
+      prettier: 3.2.5
+
+  prettier-plugin-slidev@1.0.5(prettier@3.2.5):
+    dependencies:
+      '@slidev/parser': 0.47.5
       prettier: 3.2.5
 
   prettier@3.2.5: {}
