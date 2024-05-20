@@ -3,6 +3,7 @@
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/demo/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/apps/web/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/apps/web/public/js" />
       <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/.idea" />

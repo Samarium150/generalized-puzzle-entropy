@@ -19,6 +19,9 @@
   },
   "private": true,
   "pnpm": {
+    "peerDependencyRules": {
+      "allowAny": ["typescript"]
+    },
     "updateConfig": {
       "ignoreDependencies": [
         "long",

@@ -11,7 +11,7 @@
     "@ant-design/icons": "^5.3.7",
     "@ant-design/nextjs-registry": "^1.0.0",
     "@repo/puzzle-editor": "workspace:*",
-    "antd": "^5.17.2",
+    "antd": "^5.17.3",
     "next": "^14.2.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
@@ -26,7 +26,7 @@
     "@types/react-dom": "^18.3.0",
     "autoprefixer": "^10.4.19",
     "eslint": "^8.57.0",
-    "eslint-plugin-tailwindcss": "^3.15.1",
+    "eslint-plugin-tailwindcss": "^3.15.2",
     "postcss": "^8.4.38",
     "tailwindcss": "^3.4.3",
     "typescript": "^5.4.5"

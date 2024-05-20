@@ -1,7 +1,6 @@
 {
   "buildCommand": "turbo run lint build",
   "devCommand": "turbo run dev",
-  "framework": "nextjs",
   "git": {
     "deploymentEnabled": false
   },
