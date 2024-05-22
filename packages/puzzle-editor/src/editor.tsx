@@ -11,7 +11,7 @@ import {
   RightCircleOutlined,
 } from "@ant-design/icons";
 import { HappyProvider } from "@ant-design/happy-work-theme";
-import { Button, Card, Col, Empty, Row, Space, Typography } from "antd";
+import { Button, Card, Col, Empty, QRCode, Row, Space, Typography } from "antd";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { getModule, ParsedModule, WASMModule } from "./module";
 
@@ -32,7 +32,7 @@ interface TabTitle {
 
 type TargetKey = string | React.MouseEvent | React.KeyboardEvent;
 
-const { Link, Paragraph, Text } = Typography;
+const { Paragraph, Text } = Typography;
 
 export function Editor(): React.JSX.Element {
   const items = new Map<string, React.ReactNode>();
@@ -237,15 +237,9 @@ export function Editor(): React.JSX.Element {
       const url = message.current?.innerHTML;
       if (validate(url)) {
         const child = (
-          <Link
-            copyable
-            ellipsis
-            href={url}
-            style={{ height: 20 }}
-            target="_blank"
-          >
-            {url}
-          </Link>
+          <a href={url!} target="_blank">
+            <QRCode value={url!} />
+          </a>
         );
         const key = String(++newTabIndex.current);
         setTabs([...tabs, { label: `Puzzle ${key}`, key }]);
