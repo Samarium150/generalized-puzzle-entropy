@@ -38,14 +38,3 @@ jobs:
         run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
       - name: Deploy on Vercel
         run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
-      - name: Configure GitHub Pages
-        uses: actions/configure-pages@v5
-      - name: Build GitHub Pages
-        run: cd apps/demo && npx slidev build --base /${{ github.event.repository.name }}/
-      - name: Upload pages artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: apps/demo/dist
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
