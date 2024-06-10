@@ -44,10 +44,11 @@ if (!existsSync(resolve(__dirname, `data/${process.argv[2]}`))) {
  */
 function filter(storage) {
   if (!storage || storage.width !== 9) return false;
+  if (storage.symmetry === 1) return false;
   if (
     storage.entity.find((value) => {
       return [9, 10].includes(value.type);
-    }) ||
+    }) !== undefined ||
     storage.entity.filter((value) => {
       return value.type === 3;
     }).length > 1 ||
@@ -56,7 +57,10 @@ function filter(storage) {
     }).length > 1
   )
     return false;
-  if (storage.symmetry === 1) return false;
+  // if (storage.entity.find((value) => {
+  //   return [11].includes(value.type);
+  // }) === undefined)
+  //   return false;
   /** @type {Entity[]} */
   const expanded = [];
   storage.entity.forEach((e) => {
@@ -115,28 +119,39 @@ rmSync(dist, { force: true });
 const fd = openSync(dist, "a+");
 /** @type {Map.<string, Set.<string>>} */
 const recorded = new Map();
-data.forEach((value) => {
-  if (value.upvotes >= 40 || blacklist.has(value.id)) return;
-  const encoded = errata.has(value.id)
-    ? errata.get(value.id)
-    : value.contents.replace("_0", "");
-  if (recorded.has(encoded)) {
-    recorded.get(encoded).add(value.id);
-    return;
-  }
-  /** @type {?Storage} */
-  let storage = null;
-  try {
-    storage = STORAGE.decode64(encoded);
-  } catch (_) {
-    // ignore
-  }
-  if (!filter(storage)) return;
-  appendFileSync(
-    fd,
-    `${value.id}/${value.createUtc}/${value.upvotes}/${value.solves}/${JSON.stringify(storage)}\n`,
-    "utf8",
-  );
-  recorded.set(encoded, new Set([value.id]));
-});
+/** @type {Map.<string, number>} */
+const lastUpload = new Map();
+data
+  .sort((a, b) => a.createUtc - b.createUtc)
+  .forEach((value) => {
+    if (value.upvotes <= -40 || value.upvotes >= 40 || blacklist.has(value.id))
+      return;
+    const encoded = errata.has(value.id)
+      ? errata.get(value.id)
+      : value.contents.replace("_0", "");
+    if (recorded.has(encoded)) {
+      recorded.get(encoded).add(value.id);
+      return;
+    }
+    /** @type {?Storage} */
+    let storage = null;
+    try {
+      storage = STORAGE.decode64(encoded);
+    } catch (_) {
+      // ignore
+    }
+    if (!filter(storage)) return;
+    if (
+      lastUpload.has(value.creator) &&
+      value.createUtc - lastUpload.get(value.creator) <= 7 * 60 * 60 * 1000
+    )
+      return;
+    lastUpload.set(value.creator, value.createUtc);
+    appendFileSync(
+      fd,
+      `${value.id}/${value.createUtc}/${value.upvotes}/${value.solves}/${JSON.stringify(storage)}\n`,
+      "utf8",
+    );
+    recorded.set(encoded, new Set([value.id]));
+  });
 closeSync(fd);

@@ -26,11 +26,13 @@ static void Init(const Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
 
 static auto Calculate(const Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
     kState.Reset();
-    const auto [entropy, i] = kEntropy.Calculate(puzzle, kState, 0, std::nullopt);
+    const auto [muse, i] = kEntropy.SetRelative(false).Calculate(puzzle, kState, 0, std::nullopt);
     kState.Reset();
-    const auto [advEntropy, j, k] = kEntropy.CalculateAdversarialEntropy(puzzle, kState, 0);
+    const auto [remuse, j] = kEntropy.SetRelative(true).Calculate(puzzle, kState, 0, std::nullopt);
     kState.Reset();
-    return std::make_pair(entropy, advEntropy);
+    const auto [advEntropy, h, k] = kEntropy.CalculateAdversarialEntropy(puzzle, kState, 0);
+    kState.Reset();
+    return std::make_tuple(muse, remuse, advEntropy);
 }
 
 int main(const int argc, char **argv) {
@@ -44,7 +46,7 @@ int main(const int argc, char **argv) {
         ->required(false);
     CLI11_PARSE(app, argc, argv)
 
-    kEntropy.SetBase2(true).SetRelative(true);
+    // kEntropy.SetBase2(true);
     kEntropy.ruleSet.SetRules(kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
     std::for_each(inferenceFilter.begin(), inferenceFilter.end(), [](const auto f) {
         if (f >= 0 && f < kInferenceRuleCount) kEntropy.ruleSet.DisableRule(f);
@@ -55,7 +57,7 @@ int main(const int argc, char **argv) {
         std::cerr << "Failed to open file" << std::endl;
         return 1;
     }
-    output << "id,timestamp,upvote,entropy,adv_entropy,tsi,solutions,solves" << std::endl;
+    output << "id,timestamp,upvote,muse,remuse,adv_entropy,tsi,solutions,solves" << std::endl;
     unsigned i = 0;
     const auto total = count(input) - static_cast<std::size_t>(GetLastLine(input).empty());
     for (std::string line; std::getline(input, line);) {
@@ -70,12 +72,13 @@ int main(const int argc, char **argv) {
         auto puzzle = Witness<kPuzzleWidth, kPuzzleHeight>();
         iss >> puzzle;
         Init(puzzle);
-        const auto [entropy, advEntropy] = Calculate(puzzle);
+        const auto [muse, remuse, advEntropy] = Calculate(puzzle);
         const auto tsi = kEntropy.CalculateTotalSolutionInformation(puzzle, kState);
         const auto solutions = GetNumSolutions(puzzle, kAllSolutions);
         std::ostringstream oss;
         oss << parts[0] << "," << parts[1] << "," << parts[2] << ","
-            << ((entropy == kInf) ? "inf" : std::to_string(entropy)) << "," << advEntropy << ","
+            << ((muse == kInf) ? "inf" : std::to_string(muse)) << ","
+            << ((remuse == kInf) ? "inf" : std::to_string(remuse)) << "," << advEntropy << ","
             << ((tsi == kInf) ? "inf" : std::to_string(tsi)) << "," << solutions << "," << parts[3]
             << std::endl;
         output << oss.str();

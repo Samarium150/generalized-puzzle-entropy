@@ -12,16 +12,14 @@ from sklearn.feature_selection import r_regression
 from sklearn.linear_model import LinearRegression
 
 DATE = "2024-02-20"
-# retrieved from https://ideaowl.com/remuse
-INTERCEPT = np.float64(67.33339206338432)
-SLOPE = np.float64(-3.987906486478669e-11)
 sns.set_theme(rc={"figure.dpi": 300})
-DATA_TYPES = {"id": object, "timestamp": np.int64, "upvote": np.int32, "entropy": np.float64,
+# noinspection SpellCheckingInspection
+DATA_TYPES = {"id": str, "timestamp": np.int64, "upvote": np.int32, "muse": np.float64, "remuse": np.float64,
               "adv_entropy": np.float64, "tsi": np.float64, "solutions": np.int32, "solves": np.int32}
 
 
-def ranking():
-    with open(f"data/{DATE}.json") as f:
+def ranking(date=DATE):
+    with open(f"data/{date}.json") as f:
         data = json.load(f)
     records: Dict[str, List[int]] = dict()
     for record in data:
@@ -42,6 +40,7 @@ def ranking():
         )
 
 
+# noinspection SpellCheckingInspection
 def plot():
     data = pd.read_csv("results.csv", dtype=DATA_TYPES)
     timestamp = data[["timestamp"]]
@@ -60,15 +59,22 @@ def plot():
 
     text_y = np.max(upvote) - 1
 
-    entropy = data[["entropy"]]
-    ax = sns.regplot(data, x="entropy", y="upvote", ci=None, line_kws={"color": "black"})
-    ax.text(np.max(entropy) - 1.5, text_y, f"r = {r_regression(entropy, upvote)[0]:.3f}")
-    ax.set(xlabel="Entropy", ylabel="Upvote")
-    plt.savefig("entropy_vs_upvote.png")
+    muse = data[["muse"]]
+    ax = sns.regplot(data, x="muse", y="upvote", line_kws={"color": "black"}, robust=True)
+    ax.text(np.max(muse) - 1.5, text_y, f"r = {r_regression(muse, upvote)[0]:.3f}")
+    ax.set(xlabel="MUSE", ylabel="Upvote")
+    plt.savefig("MUSE_vs_upvote.png")
+    plt.clf()
+
+    remuse = data[["remuse"]]
+    ax = sns.regplot(data, x="remuse", y="upvote", line_kws={"color": "black"}, robust=True)
+    ax.text(np.max(remuse) - 1.5, text_y, f"r = {r_regression(remuse, upvote)[0]:.3f}")
+    ax.set(xlabel="ReMUSE", ylabel="Upvote")
+    plt.savefig("ReMUSE_vs_upvote.png")
     plt.clf()
 
     adv_entropy = data[["adv_entropy"]]
-    ax = sns.regplot(data, x="adv_entropy", y="upvote", ci=None, line_kws={"color": "black"})
+    ax = sns.regplot(data, x="adv_entropy", y="upvote", line_kws={"color": "black"}, robust=True)
     ax.text(np.max(adv_entropy) - 1.5, text_y, f"r = {r_regression(adv_entropy, upvote)[0]:.3f}")
     ax.set(xlabel="Adv Entropy", ylabel="Upvote")
     plt.savefig("adv_entropy_vs_upvote.png")
@@ -76,24 +82,48 @@ def plot():
 
     tsi = data[["tsi"]]
     text_x = np.max(tsi) - 1.5
-    ax = sns.regplot(data, x="tsi", y="upvote", ci=None, line_kws={"color": "black"})
+    ax = sns.regplot(data, x="tsi", y="upvote", line_kws={"color": "black"}, robust=True)
     ax.text(text_x, text_y, f"r = {r_regression(tsi, upvote)[0]:.3f}")
     ax.set(xlabel="TSI", ylabel="Upvote")
-    plt.savefig("tsi_vs_upvote.png")
+    plt.savefig("TSI_vs_upvote.png")
     plt.clf()
 
-    ax = sns.regplot(data, x="tsi", y="solves", ci=None, line_kws={"color": "black"})
+    ax = sns.regplot(data, x="tsi", y="solves", line_kws={"color": "black"})
     ax.text(text_x, np.max(solves) - 1, f"r = {r_regression(tsi, solves)[0]:.3f}")
     ax.set(xlabel="TSI", ylabel="Solves")
-    plt.savefig("tsi_vs_solves.png")
+    plt.savefig("TSI_vs_solves.png")
     plt.clf()
 
-    ax = sns.relplot(data, x="entropy", y="adv_entropy", hue="upvote", size="upvote",
+    ax = sns.relplot(data, x="muse", y="adv_entropy", hue="upvote", size="upvote",
                      palette="plasma", alpha=0.95)
-    ax.set(xlabel="Entropy", ylabel="Adv Entropy")
+    ax.set(xlabel="MUSE", ylabel="Adv Entropy")
     ax.legend.set_title("Upvote")
-    plt.savefig("entropy_vs_adv_entropy.png")
+    plt.savefig("MUSE_vs_adv_entropy.png")
     plt.clf()
+
+    ax = sns.relplot(data, x="remuse", y="adv_entropy", hue="upvote", size="upvote",
+                     palette="plasma", alpha=0.95)
+    ax.set(xlabel="ReMUSE", ylabel="Adv Entropy")
+    ax.legend.set_title("Upvote")
+    plt.savefig("ReMUSE_vs_adv_entropy.png")
+    plt.clf()
+
+    ax = sns.relplot(data, x="tsi", y="adv_entropy", hue="upvote", size="upvote",
+                     palette="plasma", alpha=0.95)
+    ax.set(xlabel="TSI", ylabel="Adv Entropy")
+    ax.legend.set_title("Upvote")
+    plt.savefig("TSI_vs_adv_entropy.png")
+    plt.clf()
+
+    reg.fit(data[["muse", "remuse", "adv_entropy", "tsi"]], upvote)
+    with open("measures.json", "w") as f:
+        json.dump({
+            "muse": reg.coef_[0],
+            "remuse": reg.coef_[1],
+            "adv_entropy": reg.coef_[2],
+            "tsi": reg.coef_[3],
+            "score": reg.score(data[["muse", "remuse", "adv_entropy", "tsi"]], upvote)
+        }, f, indent=2)
 
 
 if __name__ == '__main__':
