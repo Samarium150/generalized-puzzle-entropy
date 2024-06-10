@@ -180,6 +180,183 @@ ActionType SeparationRule(const SearchEnvironment<WitnessState<width, height>, W
     return UNKNOWN;
 }
 
+inline unsigned IsTriangle(const WitnessRegionConstraint& constraint) {
+    return constraint.type == kTriangle ? constraint.parameter : 0;
+}
+
+template <int width, int height>
+auto CountEdges(const WitnessState<width, height>& state, int x, int y) {
+    return static_cast<unsigned>(state.OccupiedEdge(x, y, x, y + 1)) +
+           static_cast<unsigned>(state.OccupiedEdge(x, y + 1, x + 1, y + 1)) +
+           static_cast<unsigned>(state.OccupiedEdge(x + 1, y + 1, x + 1, y)) +
+           static_cast<unsigned>(state.OccupiedEdge(x + 1, y, x, y));
+}
+
+template <int width, int height>
+ActionType TriangleRule(const SearchEnvironment<WitnessState<width, height>, WitnessAction>& env,
+                        WitnessState<width, height>& state, const WitnessAction& action) {
+    if (state.path.empty()) return UNKNOWN;
+    const auto& witness = static_cast<const Witness<width, height>&>(env);
+    const auto& [currX, currY] = state.path.back();
+    switch (action) {
+        case kUp: {
+            if (currX > 0) {
+                const auto& tl = witness.GetRegionConstraint(currX - 1, currY);
+                if (const auto p = IsTriangle(tl); p != 0) {
+                    const auto edge = CountEdges(state, currX - 1, currY);
+                    if (p == 1 && edge != 0) return CANNOT_TAKE;
+                    if (p == 2 && edge == 1 &&
+                        state.OccupiedEdge(currX - 1, currY, currX - 1, currY + 1))
+                        return MUST_TAKE;
+                    if (p == 3 && edge != 0) return MUST_TAKE;
+                }
+                if (currY > 0) {
+                    if (const auto& bl = witness.GetRegionConstraint(currX - 1, currY - 1);
+                        IsTriangle(bl) == 3 && CountEdges(state, currX - 1, currY - 1) < 3)
+                        return CANNOT_TAKE;
+                }
+            }
+            if (currX < width) {
+                const auto& tr = witness.GetRegionConstraint(currX, currY);
+                if (const auto p = IsTriangle(tr); p != 0) {
+                    const auto edge = CountEdges(state, currX, currY);
+                    if (p == 1 && edge != 0) return CANNOT_TAKE;
+                    if (p == 2 && edge == 1 &&
+                        state.OccupiedEdge(currX + 1, currY, currX + 1, currY + 1))
+                        return MUST_TAKE;
+                    if (p == 3 && edge != 0) return MUST_TAKE;
+                }
+                if (currY > 0) {
+                    if (const auto& br = witness.GetRegionConstraint(currX, currY - 1);
+                        IsTriangle(br) == 3 && CountEdges(state, currX, currY - 1) < 3)
+                        return CANNOT_TAKE;
+                }
+            }
+            break;
+        }
+        case kRight: {
+            if (currY > 0) {
+                const auto& br = witness.GetRegionConstraint(currX, currY - 1);
+                if (const auto p = IsTriangle(br); p != 0) {
+                    const auto edge = CountEdges(state, currX, currY - 1);
+                    if (p == 1 && edge != 0) return CANNOT_TAKE;
+                    if (p == 2 && edge == 1 &&
+                        state.OccupiedEdge(currX, currY - 1, currX + 1, currY - 1))
+                        return MUST_TAKE;
+                    if (p == 3 && edge != 0) return MUST_TAKE;
+                }
+                if (currX > 0) {
+                    if (const auto& bl = witness.GetRegionConstraint(currX - 1, currY - 1);
+                        IsTriangle(bl) == 3 && CountEdges(state, currX - 1, currY - 1) < 3)
+                        return CANNOT_TAKE;
+                }
+            }
+            if (currY < height) {
+                const auto& tr = witness.GetRegionConstraint(currX, currY);
+                if (const auto p = IsTriangle(tr); p != 0) {
+                    const auto edge = CountEdges(state, currX, currY);
+                    if (p == 1 && edge != 0) return CANNOT_TAKE;
+                    if (p == 2 && edge == 1 &&
+                        state.OccupiedEdge(currX, currY + 1, currX + 1, currY + 1))
+                        return MUST_TAKE;
+                    if (p == 3 && edge != 0) return MUST_TAKE;
+                }
+                if (currX > 0) {
+                    if (const auto& tl = witness.GetRegionConstraint(currX - 1, currY);
+                        IsTriangle(tl) == 3 && CountEdges(state, currX - 1, currY) < 3)
+                        return CANNOT_TAKE;
+                }
+            }
+            break;
+        }
+        case kDown: {
+            if (currX > 0) {
+                const auto& bl = witness.GetRegionConstraint(currX - 1, currY - 1);
+                if (const auto p = IsTriangle(bl); p != 0) {
+                    const auto edge = CountEdges(state, currX - 1, currY - 1);
+                    if (p == 1 && edge != 0) return CANNOT_TAKE;
+                    if (p == 2 && edge == 1 &&
+                        state.OccupiedEdge(currX - 1, currY - 1, currX - 1, currY))
+                        return MUST_TAKE;
+                    if (p == 3 && edge != 0) return MUST_TAKE;
+                }
+                if (currY < height) {
+                    if (const auto& tl = witness.GetRegionConstraint(currX - 1, currY);
+                        IsTriangle(tl) == 3 && CountEdges(state, currX - 1, currY) < 3)
+                        return CANNOT_TAKE;
+                }
+            }
+            if (currX < width) {
+                const auto& br = witness.GetRegionConstraint(currX, currY - 1);
+                if (const auto p = IsTriangle(br); p != 0) {
+                    const auto edge = CountEdges(state, currX, currY - 1);
+                    if (p == 1 && edge != 0) return CANNOT_TAKE;
+                    if (p == 2 && edge == 1 &&
+                        state.OccupiedEdge(currX + 1, currY - 1, currX + 1, currY))
+                        return MUST_TAKE;
+                    if (p == 3 && edge != 0) return MUST_TAKE;
+                }
+                if (currY < height) {
+                    if (const auto& tr = witness.GetRegionConstraint(currX, currY);
+                        IsTriangle(tr) == 3 && CountEdges(state, currX, currY) < 3)
+                        return CANNOT_TAKE;
+                }
+            }
+            break;
+        }
+        case kLeft: {
+            if (currY > 0) {
+                const auto& bl = witness.GetRegionConstraint(currX - 1, currY - 1);
+                if (const auto p = IsTriangle(bl); p != 0) {
+                    const auto edge = CountEdges(state, currX - 1, currY - 1);
+                    if (p == 1 && edge != 0) return CANNOT_TAKE;
+                    if (p == 2 && edge == 1 &&
+                        state.OccupiedEdge(currX - 1, currY - 1, currX - 1, currY))
+                        return MUST_TAKE;
+                    if (p == 3 && edge != 0) return MUST_TAKE;
+                }
+                if (currX < width) {
+                    if (const auto& br = witness.GetRegionConstraint(currX, currY - 1);
+                        IsTriangle(br) == 3 && CountEdges(state, currX, currY - 1) < 3)
+                        return CANNOT_TAKE;
+                }
+            }
+            if (currY < height) {
+                const auto& tl = witness.GetRegionConstraint(currX - 1, currY);
+                if (const auto p = IsTriangle(tl); p != 0) {
+                    const auto edge = CountEdges(state, currX - 1, currY);
+                    if (p == 1 && edge != 0) return CANNOT_TAKE;
+                    if (p == 2 && edge == 1 &&
+                        state.OccupiedEdge(currX - 1, currY + 1, currX, currY + 1))
+                        return MUST_TAKE;
+                    if (p == 3 && edge != 0) return MUST_TAKE;
+                }
+                if (currX < width) {
+                    if (const auto& tr = witness.GetRegionConstraint(currX, currY);
+                        IsTriangle(tr) == 3 && CountEdges(state, currX, currY) < 3)
+                        return CANNOT_TAKE;
+                }
+            }
+            break;
+        }
+        default:
+            break;
+    }
+    return UNKNOWN;
+}
+
+template <int width, int height>
+ActionType AlongThePathRule(
+    const SearchEnvironment<WitnessState<width, height>, WitnessAction>& env,
+    WitnessState<width, height>& state, const WitnessAction& action) {
+    if (state.path.empty()) return UNKNOWN;
+    const auto& witness = static_cast<const Witness<width, height>&>(env);
+    witness.ApplyAction(state, action);
+    const bool satisfied = witness.PathTest(state);
+    witness.UndoAction(state, action);
+    return satisfied ? UNKNOWN : CANNOT_TAKE;
+}
+
 template <int width, int height>
 ActionType RegionCompletionRule(
     const SearchEnvironment<WitnessState<width, height>, WitnessAction>& env,
@@ -196,25 +373,14 @@ ActionType RegionCompletionRule(
     return regionSatisfied ? UNKNOWN : CANNOT_TAKE;
 }
 
-template <int width, int height>
-ActionType AlongThePathRule(
-    const SearchEnvironment<WitnessState<width, height>, WitnessAction>& env,
-    WitnessState<width, height>& state, const WitnessAction& action) {
-    if (state.path.empty()) return UNKNOWN;
-    const auto& witness = static_cast<const Witness<width, height>&>(env);
-    witness.ApplyAction(state, action);
-    const bool satisfied = witness.PathTest(state);
-    witness.UndoAction(state, action);
-    return satisfied ? UNKNOWN : CANNOT_TAKE;
-}
-
 enum WitnessInferenceRule {
     kPathConstraintRule,
     kInsideSolutionTreeRule,
     kSeparationRule,
-    kRegionCompletionRule,
+    kTriangleRule,
     kAlongThePathRule,
-    kInferenceRuleCount [[maybe_unused]]
+    kRegionCompletionRule,
+    kInferenceRuleCount
 };
 
 inline std::ostream& operator<<(std::ostream& os, const WitnessInferenceRule rule) {
@@ -225,10 +391,12 @@ inline std::ostream& operator<<(std::ostream& os, const WitnessInferenceRule rul
             return os << "InsideSolutionTreeRule";
         case kSeparationRule:
             return os << "SeparationRule";
-        case kRegionCompletionRule:
-            return os << "RegionCompletionRule";
+        case kTriangleRule:
+            return os << "TriangleRule";
         case kAlongThePathRule:
             return os << "AlongThePathRule";
+        case kRegionCompletionRule:
+            return os << "RegionCompletionRule";
         default:
             return os;
     }
@@ -242,6 +410,7 @@ std::unordered_map<int, std::function<ActionType(
         {kPathConstraintRule, PathConstraintRule<width, height>},
         {kInsideSolutionTreeRule, InsideSolutionTreeRule<width, height>},
         {kSeparationRule, SeparationRule<width, height>},
-        {kRegionCompletionRule, RegionCompletionRule<width, height>},
+        {kTriangleRule, TriangleRule<width, height>},
         {kAlongThePathRule, AlongThePathRule<width, height>},
+        {kRegionCompletionRule, RegionCompletionRule<width, height>},
 };
