@@ -8,28 +8,28 @@
   },
   "dependencies": {
     "@ant-design/happy-work-theme": "^1.0.0",
-    "@ant-design/icons": "^5.3.7",
-    "@ant-design/nextjs-registry": "^1.0.0",
+    "@ant-design/icons": "^5.4.0",
+    "@ant-design/nextjs-registry": "^1.0.1",
     "@repo/puzzle-editor": "workspace:*",
-    "antd": "^5.19.1",
-    "next": "^14.2.5",
+    "antd": "^5.20.2",
+    "next": "^14.2.6",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^14.2.5",
+    "@next/eslint-plugin-next": "^14.2.6",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
     "@types/eslint": "^8.56.10",
-    "@types/node": "^20.14.10",
-    "@types/react": "^18.3.3",
+    "@types/node": "^22.5.0",
+    "@types/react": "^18.3.4",
     "@types/react-dom": "^18.3.0",
-    "autoprefixer": "^10.4.19",
+    "autoprefixer": "^10.4.20",
     "eslint": "^8.57.0",
     "eslint-plugin-tailwindcss": "^3.17.4",
-    "postcss": "^8.4.39",
-    "tailwindcss": "^3.4.4",
-    "typescript": "^5.5.3"
+    "postcss": "^8.4.41",
+    "tailwindcss": "^3.4.10",
+    "typescript": "^5.5.4"
   },
   "private": true
 }
