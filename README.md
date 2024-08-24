@@ -1,4 +1,4 @@
-# Guidance of Entropy in Puzzle Design
+# Generalized Puzzle Entropy
 
 ## Getting Started
 
@@ -42,18 +42,12 @@ pnpm run test
 
 ## Useful Links
 
-### Frontend
-
+- [AntDesign](https://ant.design)
+- [Emscripten](https://emscripten.org)
+- [LLVM](https://llvm.org) 
 - [Next.js](https://nextjs.org)
 - [React](https://react.dev/)
 - [Turborepo](https://turbo.build/repo)
-
-### Backend
-
-- [CMake](https://cmake.org)
-- [Emscripten](https://emscripten.org)
-- [LLVM](https://llvm.org)
-- [Ninja](https://ninja-build.org)
 
 ## License
 

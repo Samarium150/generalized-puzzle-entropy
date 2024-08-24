@@ -2,20 +2,20 @@
 <module type="WEB_MODULE" version="4">
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.tmp" />
       <excludeFolder url="file://$MODULE_DIR$/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/demo/.turbo" />
       <excludeFolder url="file://$MODULE_DIR$/apps/web/.turbo" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/web/public/js" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/.idea" />
+      <excludeFolder url="file://$MODULE_DIR$/apps/web/out" />
       <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/.turbo" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/.venv" />
       <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/cmake-build-clang" />
       <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/cmake-build-emscripten" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/hog2" />
-      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/.venv" />
-      <excludeFolder url="file://$MODULE_DIR$/.idea/copilot/chatSessions" />
-      <excludeFolder url="file://$MODULE_DIR$/apps/demo/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/downloads" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/node" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/python" />
+      <excludeFolder url="file://$MODULE_DIR$/packages/puzzle-editor/lib/emsdk/upstream" />
+      <excludeFolder url="file://$MODULE_DIR$/temp" />
+      <excludeFolder url="file://$MODULE_DIR$/tmp" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
