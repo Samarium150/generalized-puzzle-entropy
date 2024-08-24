@@ -1,4 +1,5 @@
 #include <CLI/CLI.hpp>
+#include <filesystem>
 #include <fstream>
 
 #include "solution_util.h"
@@ -33,6 +34,39 @@ static auto Calculate(const Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
     const auto [advEntropy, h, k] = kEntropy.CalculateAdversarialEntropy(puzzle, kState, 0);
     kState.Reset();
     return std::make_tuple(muse, remuse, advEntropy);
+}
+
+[[maybe_unused]] static void RecordSolutions(const std::string &id,
+                                             const Witness<kPuzzleWidth, kPuzzleHeight> &puzzle) {
+    kState.Reset();
+    std::vector<WitnessState<kPuzzleWidth, kPuzzleHeight>> solutions;
+    std::vector<WitnessAction> actions;
+    DFS(puzzle, kState, solutions);
+    std::filesystem::create_directory(id);
+    for (auto i = 0; i < solutions.size(); ++i) {
+        std::ofstream output(id + "/" + std::to_string(i) + ".txt", std::ios::out);
+        auto &solution = solutions[i];
+        puzzle.GetActionSequence(solution, actions);
+        for (const auto &action : actions) {
+            switch (action) {
+                case kUp:
+                    output << 0 << std::endl;
+                break;
+                case kDown:
+                    output << 1 << std::endl;
+                break;
+                case kRight:
+                    output << 2 << std::endl;
+                break;
+                case kLeft:
+                    output << 3 << std::endl;
+                break;
+                default:
+                    break;
+            }
+        }
+        output.close();
+    }
 }
 
 int main(const int argc, char **argv) {

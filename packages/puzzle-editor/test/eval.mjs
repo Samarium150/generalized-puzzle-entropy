@@ -99,6 +99,17 @@ try {
   // ignore
 }
 
+const pick = new Set();
+try {
+  readFileSync(resolve(__dirname, "data/cherrypick.txt"), "utf8")
+    .split(EOL)
+    .forEach((line) => {
+      if (line) pick.add(line);
+    });
+} catch (e) {
+  // ignore
+}
+
 /** @type {Map.<string, string>} */
 const errata = new Map();
 try {
@@ -140,12 +151,13 @@ data
     } catch (_) {
       // ignore
     }
+    // if (!pick.has(value.id)) return;
     if (!filter(storage)) return;
-    if (
-      lastUpload.has(value.creator) &&
-      value.createUtc - lastUpload.get(value.creator) <= 7 * 60 * 60 * 1000
-    )
-      return;
+    // if (
+    //   lastUpload.has(value.creator) &&
+    //   value.createUtc - lastUpload.get(value.creator) <= 7 * 60 * 60 * 1000
+    // )
+    //   return;
     lastUpload.set(value.creator, value.createUtc);
     appendFileSync(
       fd,
