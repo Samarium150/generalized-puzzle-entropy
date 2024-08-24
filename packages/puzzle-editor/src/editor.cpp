@@ -17,7 +17,8 @@ auto kSolutionTree = std::vector<SolutionTreeNode>{};
 auto kSolutionIndex = 0u;
 
 static void InitPuzzle() {
-    kEntropy.SetRelative(true).ruleSet.SetRules(kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
+    kEntropy.SetRelative(true).ruleSet.SetRules(
+        kWitnessInferenceRules<kPuzzleWidth, kPuzzleHeight>);
     GetAllSolutions(kPuzzle, kState, kAllSolutions);
     BuildTree(kPuzzle, kAllSolutions, kSolutionTree);
     UpdateSolutionIndices();
@@ -33,6 +34,7 @@ static void InstallHandlers() {
     InstallKeyboardHandler(KeyboardHandler, "Show Solution", "show a solution", kAnyModifier, 'v');
     InstallKeyboardHandler(KeyboardHandler, "Export", "export the puzzle", kAnyModifier, 'w');
     InstallKeyboardHandler(KeyboardHandler, "Suggest", "make a suggestion", kAnyModifier, 'z');
+    InstallKeyboardHandler(KeyboardHandler, "Save", "Save SVG", kAnyModifier, 's');
     InstallMouseClickHandler(ClickHandler, static_cast<tMouseEventType>(kMouseMove | kMouseUp |
                                                                         kMouseDown | kMouseDrag));
     InstallWindowHandler(WindowHandler);

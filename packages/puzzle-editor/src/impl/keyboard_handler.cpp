@@ -112,6 +112,10 @@ void KeyboardHandler(const std::size_t id, tKeyboardModifier /*mod*/, const char
             Calculate();
             break;
         }
+        case 's': {
+            submitTextToBuffer(MakeSVG(GetContext(id)->display, 640, 640, 0).c_str());
+            break;
+        }
         default:
             break;
     }

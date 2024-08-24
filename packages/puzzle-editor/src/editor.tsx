@@ -246,6 +246,7 @@ export function Editor(): React.JSX.Element {
         items.set(key, child);
         setTabItems(items);
         setActiveKey(key);
+        module.keyEvent("s");
       }
     }, 200);
   };
