@@ -32,4 +32,7 @@ module.exports = {
     "node_modules/",
   ],
   overrides: [{ files: ["*.js?(x)", "*.ts?(x)"] }],
+  rules: {
+    "@next/next/no-sync-scripts": "off",
+  },
 };

@@ -17,9 +17,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>): React.JSX.Element {
-  // noinspection JSUnresolvedLibraryURL
+  // noinspection JSUnresolvedLibraryURL, HtmlRequiredTitleElement
   return (
     <html lang="en">
+      {process.env.NODE_ENV === "production" ? (
+        <head>
+          <script src={"coi-serviceworker.js"}></script>
+        </head>
+      ) : null}
       <body className={inter.className} suppressHydrationWarning>
         <AntdRegistry>{children}</AntdRegistry>
         <Script

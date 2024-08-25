@@ -21,6 +21,11 @@ const menuItems: MenuProps["items"] = [
   },
 ];
 
+const BASE_PATH =
+  process.env.NODE_ENV === "production"
+    ? process.env.NEXT_PUBLIC_BASE_PATH
+    : "";
+
 export default function Home(): JSX.Element {
   const [collapsed, setCollapsed] = useState(true);
   const [showInstructions, setShowInstructions] = useState(true);
@@ -40,8 +45,14 @@ export default function Home(): JSX.Element {
           />
         </Sider>
         <Content className="px-6 py-3">
-          <Script src="/js/editor.js" strategy="beforeInteractive" />
-          <Script src="/js/utils.js" strategy="afterInteractive" />
+          <Script
+            src={BASE_PATH + "/js/editor.js"}
+            strategy="beforeInteractive"
+          />
+          <Script
+            src={BASE_PATH + "/js/utils.js"}
+            strategy="afterInteractive"
+          />
           <Flex gap="small" vertical>
             <Title className="my-0.5" level={2}>
               Instructions{" "}

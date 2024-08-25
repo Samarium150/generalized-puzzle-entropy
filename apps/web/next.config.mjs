@@ -6,26 +6,37 @@
  * @return {import('next').NextConfig}
  */
 export default (_, { defaultConfig }) => {
-  return {
+  /** @type {import('next').NextConfig} */
+  const config = {
     ...defaultConfig,
-    async headers() {
-      return [
-        {
-          source: "/(.*)",
-          headers: [
-            {
-              key: "Cross-Origin-Embedder-Policy",
-              value: "require-corp",
-            },
-            {
-              key: "Cross-Origin-Opener-Policy",
-              value: "same-origin",
-            },
-          ],
-        }];
-    },
-    basePath: "/generalized-puzzle-entropy",
-    output: "export",
     transpilePackages: ["@repo/puzzle-editor"],
-  }
-}
+  };
+  return process.env.NODE_ENV === "production"
+    ? {
+        ...config,
+        basePath: process.env.NEXT_PUBLIC_BASE_PATH,
+        output: "export",
+      }
+    : {
+        ...config,
+        async headers() {
+          return process.env.NODE_ENV === "production"
+            ? []
+            : [
+                {
+                  source: "/(.*)",
+                  headers: [
+                    {
+                      key: "Cross-Origin-Embedder-Policy",
+                      value: "require-corp",
+                    },
+                    {
+                      key: "Cross-Origin-Opener-Policy",
+                      value: "same-origin",
+                    },
+                  ],
+                },
+              ];
+        },
+      };
+};
