@@ -1,8 +1,0 @@
-{
-  "buildCommand": "turbo run lint build",
-  "devCommand": "turbo run dev",
-  "git": {
-    "deploymentEnabled": false
-  },
-  "installCommand": "pnpm install"
-}

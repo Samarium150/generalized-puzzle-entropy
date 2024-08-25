@@ -24,6 +24,8 @@ export default (_, { defaultConfig }) => {
           ],
         }];
     },
+    basePath: "/generalized-puzzle-entropy",
+    output: "export",
     transpilePackages: ["@repo/puzzle-editor"],
   }
 }
