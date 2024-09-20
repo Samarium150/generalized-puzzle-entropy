@@ -6,7 +6,7 @@
 	update = checkout
 [submodule "packages/puzzle-editor/lib/hog2"]
 	path = packages/puzzle-editor/lib/hog2
-	url = https://github.com/Samarium150/hog2.git
+	url = https://github.com/nathansttt/hog2.git
 	shallow = true
-	branch = main
+	branch = PDB-refactor
     update = checkout
