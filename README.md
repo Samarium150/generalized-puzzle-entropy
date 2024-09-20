@@ -1,5 +1,28 @@
 # Generalized Puzzle Entropy
 
+```bibtex
+@article{Shen2024Generalized,
+  title   = {Generalized Entropy and Solution Information for Measuring Puzzle Difficulty},
+  author  = {Junwen Shen and Nathan R. Sturtevant},
+  year    = 2024,
+  journal = {Proceedings of the AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment},
+  volume  = 20,
+  number  = 1
+}
+```
+
+or
+
+```bibtex
+@mastersthesis{Shen2024Generalized,
+  title   = {Generalized Entropy and Solution Information for Measuring Puzzle Difficulty},
+  author  = {Junwen Shen},
+  year    = 2024,
+  school  = {University of Alberta},
+  type    = {Master's Thesis}
+}
+```
+
 ## Getting Started
 
 ### Prerequisites
@@ -40,7 +63,7 @@ cd packages/puzzle-editor
 pnpm run test
 ```
 
-## Useful Links
+## Tech Stack
 
 - [AntDesign](https://ant.design)
 - [Emscripten](https://emscripten.org)
