@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="640" height="640" viewBox="0 0 640 640" shape-rendering="crispEdges">
+<g style="fill:rgb(255,255,255);">
+ <rect x="0.000000" y="0.000000" width="640.000000" height="640.000000"></rect>
+ <rect x="80.000000" y="80.000000" width="480.000000" height="480.000000"></rect>
+</g><g style="fill:rgb(191,191,191);">
+ <rect x="67.999992" y="80.000000" width="24.000015" height="480.000000"></rect>
+ <rect x="188.000000" y="80.000000" width="24.000000" height="480.000000"></rect>
+ <rect x="308.000000" y="80.000000" width="24.000000" height="480.000000"></rect>
+ <rect x="428.000000" y="80.000000" width="24.000000" height="480.000000"></rect>
+ <rect x="548.000000" y="80.000000" width="24.000000" height="480.000000"></rect>
+ <rect x="80.000000" y="548.000000" width="480.000000" height="24.000000"></rect>
+ <rect x="80.000000" y="428.000000" width="480.000000" height="24.000000"></rect>
+ <rect x="80.000000" y="308.000000" width="480.000000" height="24.000000"></rect>
+ <rect x="80.000000" y="188.000000" width="480.000000" height="24.000000"></rect>
+ <rect x="80.000000" y="67.999992" width="480.000000" height="24.000015"></rect>
+</g><ellipse cx="80.000000" cy="80.000000" rx="12.000008" ry="12.000008" style="fill:rgb(191,191,191);stroke-width:1"></ellipse><ellipse cx="560.000000" cy="560.000000" rx="12.000000" ry="12.000000" style="fill:rgb(191,191,191);stroke-width:1"></ellipse><ellipse cx="80.000000" cy="560.000000" rx="12.000008" ry="12.000000" style="fill:rgb(191,191,191);stroke-width:1"></ellipse><ellipse cx="560.000000" cy="80.000000" rx="12.000000" ry="12.000008" style="fill:rgb(191,191,191);stroke-width:1"></ellipse><ellipse cx="80.000000" cy="560.000000" rx="36.000000" ry="36.000000" style="fill:rgb(191,191,191);stroke-width:1"></ellipse><rect x="548.000000" y="56.000004" width="24.00000000" height="23.99999619" style="fill:rgb(191,191,191);"></rect><ellipse cx="560.000000" cy="56.000008" rx="12.000000" ry="12.000010" style="fill:rgb(191,191,191);stroke-width:1"></ellipse><ellipse cx="152.000000" cy="392.000000" rx="12.000008" ry="12.000000" style="fill:rgb(0,0,255);stroke-width:1"></ellipse><ellipse cx="127.999992" cy="368.000000" rx="12.000008" ry="12.000000" style="fill:rgb(0,0,255);stroke-width:1"></ellipse><ellipse cx="127.999992" cy="392.000000" rx="12.000008" ry="12.000000" style="fill:rgb(0,0,255);stroke-width:1"></ellipse><ellipse cx="152.000000" cy="368.000000" rx="12.000008" ry="12.000000" style="fill:rgb(0,0,255);stroke-width:1"></ellipse><g style="fill:rgb(0,0,255);">
+ <rect x="127.999992" y="356.000000" width="24.000008" height="48.000000"></rect>
+ <rect x="116.000000" y="368.000000" width="48.000000" height="24.000000"></rect>
+</g><polygon points="260.000000,524.000000 284.000000,500.000000 260.000000,476.000000 236.000000,500.000000 260.000000,524.000000 " style="fill:rgb(0,0,255)"></polygon><polygon points="276.970563,516.970563 276.970563,483.029437 243.029437,483.029437 243.029437,516.970563 276.970563,516.970563 " style="fill:rgb(0,0,255)"></polygon><polygon points="380.000000,404.000000 404.000000,380.000000 380.000000,356.000000 356.000000,380.000000 380.000000,404.000000 " style="fill:rgb(0,0,255)"></polygon><polygon points="396.970563,396.970563 396.970563,363.029437 363.029437,363.029437 363.029437,396.970563 396.970563,396.970563 " style="fill:rgb(0,0,255)"></polygon><polygon points="500.000000,524.000000 524.000000,500.000000 500.000000,476.000000 476.000000,500.000000 500.000000,524.000000 " style="fill:rgb(0,0,255)"></polygon><polygon points="516.970563,516.970563 516.970563,483.029437 483.029437,483.029437 483.029437,516.970563 516.970563,516.970563 " style="fill:rgb(0,0,255)"></polygon><text x="260.000000" y="200.000000" text-anchor="middle" style="fill:rgb(0,0,0); font-family:Helvetica, sans-serif; font-size:24.000015px" dominant-baseline="middle">?</text>
+<text x="380.000000" y="320.000000" text-anchor="middle" style="fill:rgb(0,0,0); font-family:Helvetica, sans-serif; font-size:24.000015px" dominant-baseline="middle">?</text>
+<text x="140.000000" y="500.000000" text-anchor="middle" style="fill:rgb(0,0,0); font-family:Helvetica, sans-serif; font-size:47.999992px" dominant-baseline="middle">?</text>
+<text x="380.000000" y="500.000000" text-anchor="middle" style="fill:rgb(0,0,0); font-family:Helvetica, sans-serif; font-size:47.999992px" dominant-baseline="middle">?</text>
+
+</svg>
