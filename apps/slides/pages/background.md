@@ -314,10 +314,12 @@ Using the properties of logarithms, we can show that:
 
 $$
 \begin{align*}
-\mu(X) &=\min_{g\in G}\sum_{s_i\in\tau_g}\log_2|A(s_i)| \\
-       &=\log_2\min_{g\in G}\prod_{s_i\in\tau_g}|A(s_i)| \\
-       &=-\log_2\max_{g\in G}\prod_{(s_i,a_i)\in\tau_g}\pi_\mu(s_i,a_i) \\
-       &=-\log_2\max_{g\in G}\pi_\mu(g)
+\mu(X)&=\min_{g\in G}\sum_{s_i\in\tau_g}\log_2|A(s_i)| \\
+      &=\min_{g\in G}\log_2\prod_{s_i\in\tau_g}|A(s_i)| \\
+      &=\min_{g\in G}\left[-\log_2\prod_{s_i\in\tau_g}|A(s_i)|^{-1}\right] \\
+      &=\min_{g\in G}\left[-\log_2\prod_{(s_i,a_i)\in\tau_g}\pi_\mu(a_i,s_i)\right] \\
+      &=\min_{g\in G}\left[-\log_2\pi_\mu(g)\right] \\
+      &=-\log_2\max_{g\in G}\pi_\mu(g)
 \end{align*}
 $$
 
@@ -353,7 +355,7 @@ for using the probability distribution $P$ to represent the distribution $Q$.
 <v-click>
 
 For ReMUSE, at each state, we compute the relative entropy
-between the softmin of successors' relative entropy and the uniform distribution plus the minimum suceessors' entropy.
+between the softmin of successors' relative entropy and the uniform distribution plus the minimum successor's entropy.
 
 $$
 \rho(s)=D_\text{KL}\left[\underset{s_i\in\sigma(s)}{\text{softmin}}(\rho(s_i))\ \|\ \text{Unif}(|A(s)|)\right]+\min_{s_i\in\sigma(s)}\rho(s_i)
