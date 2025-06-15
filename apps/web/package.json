@@ -12,7 +12,7 @@
     "@ant-design/nextjs-registry": "^1.0.1",
     "@repo/puzzle-editor": "workspace:*",
     "antd": "^5.20.6",
-    "next": "^14.2.13",
+    "next": "^14.2.30",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
