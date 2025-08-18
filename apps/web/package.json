@@ -7,29 +7,29 @@
     "lint": "next lint --fix"
   },
   "dependencies": {
-    "@ant-design/happy-work-theme": "^1.0.0",
-    "@ant-design/icons": "^5.5.1",
-    "@ant-design/nextjs-registry": "^1.0.1",
+    "@ant-design/happy-work-theme": "^1.0.1",
+    "@ant-design/icons": "^5.6.1",
+    "@ant-design/nextjs-registry": "^1.1.0",
     "@repo/puzzle-editor": "workspace:*",
-    "antd": "^5.20.6",
-    "next": "^14.2.13",
+    "antd": "^5.27.0",
+    "next": "^14.2.31",
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
-    "@next/eslint-plugin-next": "^14.2.13",
+    "@next/eslint-plugin-next": "^14.2.31",
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
-    "@types/eslint": "^8.56.10",
-    "@types/node": "^22.5.5",
-    "@types/react": "^18.3.8",
-    "@types/react-dom": "^18.3.0",
-    "autoprefixer": "^10.4.20",
-    "eslint": "^8.57.0",
-    "eslint-plugin-tailwindcss": "^3.17.4",
-    "postcss": "^8.4.47",
-    "tailwindcss": "^3.4.12",
-    "typescript": "^5.6.2"
+    "@types/eslint": "^8.56.12",
+    "@types/node": "^24.3.0",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "autoprefixer": "^10.4.21",
+    "eslint": "^8.57.1",
+    "eslint-plugin-tailwindcss": "^3.18.2",
+    "postcss": "^8.5.6",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.9.2"
   },
   "private": true
 }
