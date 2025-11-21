@@ -25,11 +25,8 @@ export default function RootLayout({
           <script src={"coi-serviceworker.js"}></script>
         </head>
       ) : null}
-      <body
-        className={inter.className}
-        suppressHydrationWarning={process.env.NODE_ENV === "development"}
-      >
-        <AntdRegistry layer>{children}</AntdRegistry>
+      <body className={inter.className} suppressHydrationWarning>
+        <AntdRegistry>{children}</AntdRegistry>
         <Script
           src="https://cdn.jsdelivr.net/npm/long@3.0.1/dist/long.min.js"
           strategy="beforeInteractive"
