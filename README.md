@@ -3,12 +3,17 @@
 ```bibtex
 @article{Shen2024Generalized,
   title   = {Generalized Entropy and Solution Information for Measuring Puzzle Difficulty},
-  author  = {Junwen Shen and Nathan R. Sturtevant},
+  author  = {Shen, Junwen and Sturtevant, Nathan R.},
   year    = 2024,
+  month   = {Nov.},
   journal = {Proceedings of the AAAI Conference on Artificial Intelligence and Interactive Digital Entertainment},
   volume  = 20,
-  number  = 1
+  number  = 1,
+  pages   = {117--126},
+  doi     = {10.1609/aiide.v20i1.31872},
+  url     = {https://ojs.aaai.org/index.php/AIIDE/article/view/31872}
 }
+
 ```
 
 or
@@ -18,8 +23,11 @@ or
   title   = {Generalized Entropy and Solution Information for Measuring Puzzle Difficulty},
   author  = {Junwen Shen},
   year    = 2024,
+  month   = {Nov.},
   school  = {University of Alberta},
-  type    = {Master's Thesis}
+  type    = {Master's Thesis},
+  doi     = {10.7939/r3-rzds-5t46},
+  url     = {https://ualberta.scholaris.ca/items/44b9568f-ed9b-4819-99d6-01e6ad46f05b}
 }
 ```
 
